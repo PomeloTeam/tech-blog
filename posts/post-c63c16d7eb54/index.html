@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>事半功倍：手机远程调试效率倍增 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章: &quot;长风破浪：Mach-O文件结构解读&quot; 本篇文章将简要介绍手机远程调试。 1.手机远程调试 这篇文章介绍了探索Cydia的使用方式: &quot;解锁潜力：探索Cydia的使用方式&quot; 1. 要使用…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事半功倍：手机远程调试效率倍增">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-c63c16d7eb54/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章: &quot;长风破浪：Mach-O文件结构解读&quot; 本篇文章将简要介绍手机远程调试。 1.手机远程调试 这篇文章介绍了探索Cydia的使用方式: &quot;解锁潜力：探索Cydia的使用方式&quot; 1. 要使用…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/6c5be7cc2d1f.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/6c5be7cc2d1f.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "事半功倍：手机远程调试效率倍增",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-c63c16d7eb54/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/6c5be7cc2d1f.webp",
+  "datePublished": "2020-01-10T09:26:46.000Z",
+  "dateModified": "2024-04-14T23:38:58.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-c63c16d7eb54/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '事半功倍：手机远程调试效率倍增',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">事半功倍：手机远程调试效率倍增</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">事半功倍：手机远程调试效率倍增</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-01-10T09:26:46.000Z" title="发表于 2020-01-10 17:26:46">2020-01-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>上一篇文章: <a href="/tech-blog/posts/post-4db5e476dbb6/">“长风破浪：Mach-O文件结构解读”</a></p>
+<p>本篇文章将简要介绍手机远程调试。</p>
+<p><img src="/tech-blog/assets/images/6c5be7cc2d1f.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="1-手机远程调试"><a href="#1-手机远程调试" class="headerlink" title="1.手机远程调试"></a>1.手机远程调试</h4><p>这篇文章介绍了探索Cydia的使用方式: <a href="/tech-blog/posts/post-0645b691a29e/">“解锁潜力：探索Cydia的使用方式”</a></p>
+<ul>
+<li><p><code>1.</code> 要使用OpenSSH工具进行远程连接，首先需要在越狱设备上安装Cydia，并从Cydia中安装OpenSSH工具。</p>
+</li>
+<li><p><code>2.</code> 通过使用USBMuxd脚本，可以实现端口转发，为后续的SSH连接做准备。</p>
+</li>
+<li><p><code>3.</code> 通过ssh命令，可以进行与越狱设备的远程连接。</p>
+</li>
+<li><p><code>4.</code> 最后，可以利用SCP等命令进行文件传输等操作。</p>
+</li>
+<li><p><code>5.</code> 文章还提及了无线和有线远程连接在越狱设备上的一些不同之处，这对于进行远程调试时的选择和设置是很重要的。</p>
+<ul>
+<li><p><code>5.1</code> 无线连接不需要进行端口转发。</p>
+</li>
+<li><p><code>5.2</code> 有线连接需要进行端口转发。</p>
+</li>
+<li><p><code>5.3</code> 无线连接时，在终端中使用命令 ssh user@手机ip地址。</p>
+</li>
+<li><p><code>5.4</code> 有线连接时，在终端中使用命令 ssh root@localhost -p 2222。</p>
+</li>
+<li><p><code>5.5</code> 使用USB连接相比无线连接更稳定且传输速度更快。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-SSH"><a href="#2-SSH" class="headerlink" title="2.SSH"></a>2.SSH</h4><p>每次调试deb包时都要反复输入密码确实很麻烦。或许可以考虑使用SSH密钥进行身份验证，这样就不必每次都输入密码了。</p>
+<p>您可以生成一个SSH密钥对，并将公钥添加到iOS设备的~&#x2F;.ssh&#x2F;authorized_keys文件中。</p>
+<p>这样，当您连接到设备时，SSH将会使用密钥进行身份验证，而不是要求您输入密码。</p>
+<p>这样一来，您就可以更快捷地进行调试工作，提高效率。</p>
+<p><img src="/tech-blog/assets/images/6e164af94b21.webp" alt="ssh" loading='lazy'></p>
+<p>ssh</p>
+<ul>
+<li><p>在远程调试时，通常需要输入密码。默认密码为alpine。</p>
+</li>
+<li><p>如果您曾修改过密码，则需要记住您设置的密码。</p>
+</li>
+<li><p>当您使用make package install命令时，您可能需要输入密码两次。</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/a6e717abcdd8.webp" alt="make package install" loading='lazy'></p>
+<p>make package install</p>
+<p>上述情况确实会影响效率。正好我们可以引入SSH来解决这个问题。</p>
+<p>在讨论SSH时，很多朋友会混淆SSH、OpenSSH、SSL和OpenSSL等术语。</p>
+<ul>
+<li>SSL,OpenSSH,SSL,OpenSSL</li>
+</ul>
+<p><code>1.</code> SSL（Secure Sockets Layer）是一种安全协议，用于网络通信，提供安全性和数据完整性。它在传输层对网络连接进行加密。</p>
+<p><code>2.</code> OpenSSL是SSL协议的开源实现，广泛用于加密通信。大部分HTTPS请求使用HTTP协议，但是在OpenSSL的加密下，数据传输变得更加安全可靠。</p>
+<p><code>3.</code> OpenSSH是用于安全远程登录的工具，它的加密功能是通过OpenSSL来完成的。这意味着OpenSSH使用OpenSSL提供的加密算法来保护通信的安全性。</p>
+<h6 id="4-SSH"><a href="#4-SSH" class="headerlink" title="4. SSH"></a><code>4.</code> SSH</h6><p>SSH协议一共有两个版本，分别是SSH-1和SSH-2。目前使用较多的是SSH-2版本。</p>
+<p><code>注意</code> 在进行SSH通信时，需要注意客户端和服务端的SSH版本要保持一致才能够成功通信。</p>
+<ul>
+<li><p>查看SSH版本<br>客户端: <code>/etc/ssh/ssh_config</code><br>服务端: <code>/etc/ssh/sshd_config</code></p>
+</li>
+<li><p>SSH通信过程<br><code>1.</code> 建立安全连接<br><code>2.</code> 客户端认证<br><code>3.</code> 数据传输</p>
+</li>
+<li><p>SSH的客户端认证方式<br><code>1.</code> 基于密码的客户端认证<br><code>2.</code> 基于密钥的客户端认证</p>
+</li>
+</ul>
+<p><code>注意</code></p>
+<p>SSH-2默认使用密钥认证机制。在密钥认证中，用户会生成一对密钥：公钥和私钥。</p>
+<p>公钥存储在服务器上，而私钥则保存在用户的本地计算机上。</p>
+<p>服务器会通过公钥来验证用户发送的加密结果，如果验证成功，则认为用户是合法的，并允许其进行连接。</p>
+<ul>
+<li>密钥认证登录</li>
+</ul>
+<p>如何在客户端生成一对相关联的密钥(Key Pair):<br><code>一个公钥 (Public Key)</code> ,<code>一个私钥 (Private Key)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>接着,我们敲回车键即可</li>
+<li>OpenSSH默认生成的是RSA密钥,可以通过-t参数指定密钥类型</li>
+</ul>
+<p><img src="/tech-blog/assets/images/81348325df07.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li><p>生成的公钥 &#x2F; 私钥是 : <code>~/.ssh/id_rsa_pub</code> , <code>~/.ssh/id_rsa</code></p>
+</li>
+<li><p>接着我们创建.ssh文件夹</p>
+</li>
+</ul>
+<p><code>mkdir .ssh</code></p>
+<p><img src="/tech-blog/assets/images/c8a8696c76f8.webp" alt="文章配图" loading='lazy'></p>
+<p>已经存在.ssh目录，无法再次创建。</p>
+<ul>
+<li>我们把id_rsa.pub从Mac拷贝到移动端的.ssh文件夹</li>
+</ul>
+<p><img src="/tech-blog/assets/images/3caa3822d381.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>我们把id_rsa.pub的内容自动追加到服务器的 ~&#x2F;.ssh&#x2F;authorized_keys尾部</li>
+</ul>
+<p><img src="/tech-blog/assets/images/23c389ff789a.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>我们再远程登录一下客户端,看看是否免密登录.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/820df4b708c2.webp" alt="文章配图" loading='lazy'></p>
+<p>输入命令后,我们就可以免密登录</p>
+<p><code>注意</code><br>如果您输入命令后仍然需要输入密码，可以将您的公钥添加到authorized_keys文件中进行授权。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本篇文章介绍了如何实现免密远程登录手机，并详细介绍了SSH协议。在文章中还提及了SSL、OpenSSH和OpenSSL等相关概念。相信通过这篇文章，您对远程调试应该有了更深入的了解。</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/a6651bffd99f">事半功倍：手机远程调试效率倍增</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%89%8B%E6%9C%BA%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-text">1.手机远程调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-SSH"><span class="toc-text">2.SSH</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#4-SSH"><span class="toc-text">4. SSH</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

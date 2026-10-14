@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>探索未知：倾听青花瓷Charles在AppStore的轻声细语 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1.Charles charles--(青花瓷) Charles是一个HTTP代理&#x2F; HTTP监视器&#x2F;反向代理，使开发人员能够查看他们的机器和Internet之间的所有HTTP和SSL &#x2F; HTTPS…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索未知：倾听青花瓷Charles在AppStore的轻声细语">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-309685b38986/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="1.Charles charles--(青花瓷) Charles是一个HTTP代理&#x2F; HTTP监视器&#x2F;反向代理，使开发人员能够查看他们的机器和Internet之间的所有HTTP和SSL &#x2F; HTTPS…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/5be92dfe84da.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/5be92dfe84da.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "探索未知：倾听青花瓷Charles在AppStore的轻声细语",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-309685b38986/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/5be92dfe84da.webp",
+  "datePublished": "2018-06-07T16:04:33.000Z",
+  "dateModified": "2024-06-19T09:31:10.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-309685b38986/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '探索未知：倾听青花瓷Charles在AppStore的轻声细语',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">探索未知：倾听青花瓷Charles在AppStore的轻声细语</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">探索未知：倾听青花瓷Charles在AppStore的轻声细语</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2018-06-07T16:04:33.000Z" title="发表于 2018-06-08 00:04:33">2018-06-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/">iOS开发技术记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h4 id="1-Charles"><a href="#1-Charles" class="headerlink" title="1.Charles"></a>1.Charles</h4><p><img src="/tech-blog/assets/images/5be92dfe84da.webp" alt="charles--(青花瓷)" loading='lazy'></p>
+<p>charles–(青花瓷)</p>
+<p>Charles是一个HTTP代理&#x2F; HTTP监视器&#x2F;反向代理，使开发人员能够查看他们的机器和Internet之间的所有HTTP和SSL &#x2F; HTTPS通信。这包括请求、响应和HTTP头(包含cookie和缓存信息)。</p>
+<h4 id="2-Charles-使用与配置"><a href="#2-Charles-使用与配置" class="headerlink" title="2.Charles 使用与配置"></a>2.Charles 使用与配置</h4><ul>
+<li><p>2.1 抓取HTTP请求</p>
+<p><img src="/tech-blog/assets/images/7f6f2b755e2a.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">打开Charles,打开Charlels主题菜单,找到Proxy</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">勾选上macOS Proxy就可以了</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在macOS Proxy 的下方有Proxy Settings选项,点击打开</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/2632968a31e4.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在Port出输入8888,并且勾选下方Enable transparent HTTP proxying 选项,点击OK即可.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2.2 找到我们mac的ip,以方便在mac上抓取移动端app的数据包<br>三种种方式找到我们的mac ip地址<br>第一种:</li>
+</ul>
+<p><img src="/tech-blog/assets/images/f97d22a1cc7b.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(设置中找到网络即可看到mac ip地址)</span><br></pre></td></tr></table></figure>
+
+<p>第二种:</p>
+<p><img src="/tech-blog/assets/images/8ee082d3c35c.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/3f3d4c6dca27.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(在Charles菜单栏中,找到Help--&gt;Local IP Address,打开即可找到ip地址)</span><br></pre></td></tr></table></figure>
+
+<p>第三种:</p>
+<p><img src="/tech-blog/assets/images/5b7d41177871.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(终端--&gt;ifconfig)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>2.3 手机配置</p>
+<p><img src="/tech-blog/assets/images/7c678d7e1527.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>2.4 然后就可以愉快的抓取http包了.</p>
+</li>
+</ul>
+<h4 id="3-抓取https包"><a href="#3-抓取https包" class="headerlink" title="3.抓取https包"></a>3.抓取https包</h4><ul>
+<li>Charles可以抓取http协议的包,也能抓取https协议的包.</li>
+<li>由于https是经过加密的,抓取的包以密文方式展现的</li>
+<li>配置Charles的SSL可以以明文查看https协议传输的内容</li>
+</ul>
+<p><img src="/tech-blog/assets/images/6d1186ad6c44.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">菜单栏中找到Help--&gt;SSL Proxying --&gt;&gt;Install Charies Root Certificate!</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/ae57c0b42acb.webp" alt="C6E600A0-161E-4AF2-8CAC-FA5E6EA88A1F.png" loading='lazy'></p>
+<p>C6E600A0-161E-4AF2-8CAC-FA5E6EA88A1F.png</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在钥匙串中,找到Charles Proxy 证书,这个是我信任后的证书</span><br><span class="line">安装的后的证书是不被信任的.</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/fcc8f14c42ad.webp" alt="信任证书" loading='lazy'></p>
+<p>信任证书</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我们选中证书,右键,显示简介就可以出现上图,我们信任证书即可</span><br><span class="line">然后输入mac密码确认.</span><br><span class="line">证书到这里已经完成安装</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置SSL</li>
+</ul>
+<p><img src="/tech-blog/assets/images/d31154092667.webp" alt="SSL Proxying Settings" loading='lazy'></p>
+<p>SSL Proxying Settings</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">菜单栏--&gt; Proxy --&gt; SSL Proxying Settings</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/2c8b5359ea54.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Host: * </span><br><span class="line">Port: 443</span><br><span class="line">点击ok即可完成配置</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>好了,这里就可以以明文的方式查看https传输的详情了.</li>
+</ul>
+<h4 id="4-Charles抓包工具的中文乱码解决办法"><a href="#4-Charles抓包工具的中文乱码解决办法" class="headerlink" title="4.Charles抓包工具的中文乱码解决办法"></a>4.Charles抓包工具的中文乱码解决办法</h4><p>装好了,打开Charles后,发现抓到的包content都是乱码.<br>下面有个解决办法,有助于大家参考,解决了问题.</p>
+<p><img src="/tech-blog/assets/images/896b774c7ff9.webp" alt="Rewrite" loading='lazy'></p>
+<p>Rewrite</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">菜单栏找到--&gt;Tools--&gt;Rewrite</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/eb1513ea1845.webp" alt="Enable Rewrite" loading='lazy'></p>
+<p>Enable Rewrite</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">开启Enable Rewrite ,添加charset</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/c0e230bfd392.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Name: UTF-8-Set</span><br><span class="line">点击Add,添加内容</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/aac1c2b9a960.webp" alt="E6A6F6F7D8C8E5F365EC9111E33EB1F4.png" loading='lazy'></p>
+<p>E6A6F6F7D8C8E5F365EC9111E33EB1F4.png</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">红框出添加或者勾选,点击ok即可完成配置.</span><br></pre></td></tr></table></figure>
+
+<p>我们的问题就可以解决了.</p>
+<h4 id="5-AppStore-数据包抓取"><a href="#5-AppStore-数据包抓取" class="headerlink" title="5. AppStore 数据包抓取"></a>5. AppStore 数据包抓取</h4><p>如果我们完成了所有的配置，是不是就可以愉快地抓包了呢？心情会变得开心。但是问题随之而来，到底是什么问题呢？这么神秘吗？这个问题确实有点神秘。</p>
+<p><img src="/tech-blog/assets/images/be7f3baf4c7f.webp" alt="iTunes Store 与 App Store" loading='lazy'></p>
+<p>iTunes Store 与 App Store</p>
+<p><img src="/tech-blog/assets/images/8e35c524f385.webp" alt="登录" loading='lazy'></p>
+<p>登录</p>
+<p><img src="/tech-blog/assets/images/c6a9e15b23dc.webp" alt="文章配图" loading='lazy'></p>
+<p>我们到了这一步都还顺利，但突然出现了意想不到的问题。当我们输入密码和账号后，点击登录按钮时却提示连接到Apple服务器出错，这让我们非常不开心。当时甚至无法打开AppStore，显示连接不到Apple服务器。其他软件可以正常抓取数据，所以我们猜测是不是苹果设置了反抓取机制。</p>
+<p>后来，我们找到了原因：越狱手机需要禁止SSL Pinning证书，而AppStore使用的是SSL Pinning（证书锁定）。因此，无法通过抓包工具直接抓取包。要想抓取包，必须通过安装插件来禁止SSL Pinning。这是目前最有效的解决方法，但不确定是否有效。我们决定尝试一下。</p>
+<ul>
+<li><ol>
+<li>我们首先准备越狱机（系统版本为iOS 9.3.1，并已越狱）。</li>
+</ol>
+</li>
+<li>2.下载(SSL KillSwitch 2)插件。<br>地址: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/nabla-c0d3/ssl-kill-switch2">https://github.com/nabla-c0d3/ssl-kill-switch2</a></li>
+</ul>
+<p><img src="/tech-blog/assets/images/ca19a1823d69.webp" alt="ssl-kill-switch2" loading='lazy'></p>
+<p>ssl-kill-switch2</p>
+<p><img src="/tech-blog/assets/images/a14c6dfef946.webp" alt="sslkillswitch--deb" loading='lazy'></p>
+<p>sslkillswitch–deb</p>
+<ul>
+<li>3.越狱机都有cydia软件,一定要装上插件OpenSSH<br>这里就不介绍如何安装了,请看我写的<a href="/tech-blog/posts/post-be03991987b9/">“技艺精进：iOS逆向工具精选”</a> ,有讲到OpenSSH.</li>
+<li>4.连接手机终端，将deb包传输到越狱手机。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp com.nablac0d3.sslkillswitch2_0.12.deb  root@host:var/root/</span><br></pre></td></tr></table></figure>
+
+<p>安装sslkillswitch</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dpkg -i  com.nablac0d3.sslkillswitch2_0.12.deb</span><br></pre></td></tr></table></figure>
+
+<p>安装中遇到的问题:</p>
+<p><img src="/tech-blog/assets/images/d2b63f1ad796.webp" alt="没有安装preferenceloader" loading='lazy'></p>
+<p>没有安装preferenceloader</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">主要cydia没有安装插件 preferenceloader</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在cydia中找到该插件,并安装.就可以解决问题.</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/b863a838fb60.webp" alt="安装preferenceloader" loading='lazy'></p>
+<p>安装preferenceloader</p>
+<p>安装完成后,手机会立即重启,重启后我们进入设置,最下面会多了一个SSL Kill Switch2</p>
+<p><img src="/tech-blog/assets/images/80ff3e34cbd1.webp" alt="SSL Kill Switch 2" loading='lazy'></p>
+<p>SSL Kill Switch 2</p>
+<p><img src="/tech-blog/assets/images/a13c34dd7165.webp" alt="Disable Certificate Validation" loading='lazy'></p>
+<p>Disable Certificate Validation</p>
+<ul>
+<li>5.这一步完成后,应该可以使用了.虽然禁止了SSL Pinning,我们登录的时候仍然是报服务器请求错误.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Why SSL Kill Switch didn’t work</span><br><span class="line"></span><br><span class="line">I initially thought the issue to be that the strategy used by the SSL Kill</span><br><span class="line">Switchto disable certificate validation somehow wasn’t enough to </span><br><span class="line">bypass *itunesstored*’s certificate pinning. However, it turns out that the SSL </span><br><span class="line">Kill Switch was just not being injected into the *itunesstored* process at all, </span><br><span class="line">for a couple reasons:</span><br><span class="line"></span><br><span class="line">The itunesstored process is started as a daemon by launchd early during </span><br><span class="line">the device’s boot sequence, before MobileSubstrate and MobileLoader get </span><br><span class="line">started. Therefore, none of the MobileSubstrate tweaks installed on the </span><br><span class="line">device, including the SSL Kill Switch, get injected into this process.</span><br><span class="line">The SSL Kill Switch had a MobileLoader filter so that the code disabling </span><br><span class="line">certificate validation would only be loaded into apps linking the UIKit bundle </span><br><span class="line">(ie. applications with a user interface). This was initially done to restrict the </span><br><span class="line">effect of the SSL Kill Switch to App Store apps only. </span><br><span class="line">However, itunesstored is a daemon that doesn’t have a user interface, </span><br><span class="line">hence the filter prevented MobileLoader from injecting the SSL Kill Switch </span><br><span class="line">into the process.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">After figuring this out, getting *itunesstored* to stop validating SSL </span><br><span class="line">certificates was very straightforward. First of all, make sure you’re using the </span><br><span class="line">latest version of the SSL Kill Switch(at least v0.5). Then, all you need to do is </span><br><span class="line">kill the itunesstored process:</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iPad-Mini:~ root# ps -ef | grep itunesstored</span><br><span class="line">501   170     1   0   0:00.00 ??         0:01.95 /System/Library/PrivateFrameworks/iTunesStore.framework/Support/itunesstored</span><br><span class="line">  0   432   404   0   0:00.00 ttys000    0:00.01 grep itunesstored</span><br><span class="line"></span><br><span class="line">iPad-Mini:~ root# kill -s KILL 170</span><br></pre></td></tr></table></figure>
+
+<p>原因是在早期启动时，itunesstored进程作为守护进程启动，并且在设备的引导序列中开始了MobileSubstrate和MobileLoader。因此，SSL Kill Switch作为MobileSubstrate的插件，无法注入到itunesstored进程中。<br>解决方法是必须杀掉itunesstored进程，因为itunesstored作为守护进程会自动启动。在自启时，SSL Kill Switch 就会被注入到itunesstored进程中。操作命令如下，我们也可以自己操作一下。</p>
+<p><img src="/tech-blog/assets/images/8d517125401d.webp" alt="kill进程" loading='lazy'></p>
+<p>kill进程</p>
+<p>kill进程后，我们重启App Store，就可以愉快地抓包了。</p>
+<p>我第一次操作时并没有得到任何结果，开始觉得这个方法并没有解决问题。后来，我尝试了关机重启，然后再次执行kill命令，最后，一切都正常了。</p>
+<p>如果你也遇到了类似情况，可以尝试重启手机多次，多操作几次。</p>
+<h4 id="6-总结"><a href="#6-总结" class="headerlink" title="6.总结"></a>6.总结</h4><p>因为最近研究抓取AppStore的数据包，我开始研究了一下Charles。刚接触就遇到了一些问题，所以我把自己的解决方法告诉了大家，希望能帮助大家少走弯路，节省更多的时间。</p>
+<p>本文简单介绍了Charles的配置和使用,如何获取AppStore的数据包。当然，Charles还有许多其他功能等待你去研究。希望这篇文章能对你有所帮助。</p>
+<p>我还有许多文章准备更新，敬请持续关注。</p>
+<p>公众号：听木子说心语。文章也会同步在公众号上发布，有需要的朋友可以关注一下。</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/885407c7e893">探索未知：倾听青花瓷Charles在AppStore的轻声细语</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Charles"><span class="toc-text">1.Charles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Charles-%E4%BD%BF%E7%94%A8%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-text">2.Charles 使用与配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%8A%93%E5%8F%96https%E5%8C%85"><span class="toc-text">3.抓取https包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Charles%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E7%9A%84%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-text">4.Charles抓包工具的中文乱码解决办法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-AppStore-%E6%95%B0%E6%8D%AE%E5%8C%85%E6%8A%93%E5%8F%96"><span class="toc-text">5. AppStore 数据包抓取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%80%BB%E7%BB%93"><span class="toc-text">6.总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

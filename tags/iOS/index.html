@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>标签: iOS | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="记录 iOS、Swift、逆向分析与跨平台开发的实践。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="听木子说心语">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/tags/iOS/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="记录 iOS、Swift、逆向分析与跨平台开发的实践。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/img/jianshu-avatar.webp">
+<meta property="article:author" content="听木子说心语">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/img/jianshu-avatar.webp"><script type="application/ld+json"></script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/tags/iOS/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '标签: iOS',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">iOS</h1></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-5d70b52be8ec/" title="解锁迷局：Instagram 登录链路行为溯源"><img class="post-bg" src="/tech-blog/assets/images/7d6b691be249.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="解锁迷局：Instagram 登录链路行为溯源" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-5d70b52be8ec/" title="解锁迷局：Instagram 登录链路行为溯源">解锁迷局：Instagram 登录链路行为溯源</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-04-08T01:53:59.000Z" title="发表于 2025-04-08 09:53:59">2025-04-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">1.环境 环境: App版本: IEluc3RhZ3JhbSjniYjmnKw6IDI0Ni4zKQ== 型号: iPhone6s 系统: 13.3.1 frida: 14.2.18 1.抓包 1.1…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-7ab89c4d8d92/" title="锲而不舍: 反调试技术探索"><img class="post-bg" src="/tech-blog/assets/images/e592af236e66.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="锲而不舍: 反调试技术探索" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-7ab89c4d8d92/" title="锲而不舍: 反调试技术探索">锲而不舍: 反调试技术探索</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-02-22T12:47:26.000Z" title="发表于 2020-02-22 20:47:26">2020-02-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "幽径探寻：Dylib动态库注入技巧" 在当今数字化的世界中，安全问题日益突出，特别是在软件开发和应用程序领域。随着技术的不断更新，反调试技术的研究和应用显得尤为重要。 本文将探讨反调试…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-aaad55f989dc/" title="幽径探寻：Dylib动态库注入技巧"><img class="post-bg" src="/tech-blog/assets/images/667aeda7a14c.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="幽径探寻：Dylib动态库注入技巧" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-aaad55f989dc/" title="幽径探寻：Dylib动态库注入技巧">幽径探寻：Dylib动态库注入技巧</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-02-21T13:57:14.000Z" title="发表于 2020-02-21 21:57:14">2020-02-21</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "专注实践：解析lldb砸壳实战技巧" 在iOS逆向工程中，动态库注入是一项关键技术，允许开发者在运行时向目标应用程序注入自定义的动态链接库（Dylib），从而实现各种定制化的功能扩展和…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-93afafdfc959/" title="专注实践：解析lldb砸壳实战技巧"><img class="post-bg" src="/tech-blog/assets/images/0d353d124eea.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="专注实践：解析lldb砸壳实战技巧" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-93afafdfc959/" title="专注实践：解析lldb砸壳实战技巧">专注实践：解析lldb砸壳实战技巧</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-02-19T06:30:10.000Z" title="发表于 2020-02-19 14:30:10">2020-02-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "举一反三：iOS逆向App签名" "金蛋破壳：iOS应用砸壳工具解密",介绍了如何通过工具砸壳,读者朋友可以先阅读一下。 本篇文章,我们将使用LLDB进行手动砸壳操作，以增强对iOS应…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-c4d55b2b980e/" title="举一反三：iOS逆向App签名"><img class="post-bg" src="/tech-blog/assets/images/0c6ddf6fde1a.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="举一反三：iOS逆向App签名" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-c4d55b2b980e/" title="举一反三：iOS逆向App签名">举一反三：iOS逆向App签名</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-02-06T10:13:40.000Z" title="发表于 2020-02-06 18:13:40">2020-02-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "畅所欲言: iOS逆向问题讨论" 本篇文章我们继续介绍如何对App进行签名。 内容包括代码签名和自动化签名的使用，将会加深你对应用签名的理解。 App签名 1.App签名的目的 App…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-6c5d53a93820/" title="畅所欲言: iOS逆向问题讨论"><img class="post-bg" src="/tech-blog/assets/images/3a610a099346.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="畅所欲言: iOS逆向问题讨论" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-6c5d53a93820/" title="畅所欲言: iOS逆向问题讨论">畅所欲言: iOS逆向问题讨论</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-14T08:27:15.000Z" title="发表于 2020-01-14 16:27:15">2020-01-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "静待花开：iOS密码学算法解读" 1.如果遇到bool类型的方法,我们如何调试. 我依然用源项目代码做实验. ViewController #import "ViewControlle…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-82c25c6c59ca/" title="静待花开：iOS密码学算法解读"><img class="post-bg" src="/tech-blog/assets/images/196354e1fd8b.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="静待花开：iOS密码学算法解读" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-82c25c6c59ca/" title="静待花开：iOS密码学算法解读">静待花开：iOS密码学算法解读</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-13T12:44:36.000Z" title="发表于 2020-01-13 20:44:36">2020-01-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "事半功倍：手机远程调试效率倍增" 密码学，作为一门研究数据加密和解密的学科，不仅仅是一种技术，更是一种保护隐私和信息安全的重要手段。 它涉及到许多领域，包括算法、数学、计算机科学等等。…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-c63c16d7eb54/" title="事半功倍：手机远程调试效率倍增"><img class="post-bg" src="/tech-blog/assets/images/6c5be7cc2d1f.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="事半功倍：手机远程调试效率倍增" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-c63c16d7eb54/" title="事半功倍：手机远程调试效率倍增">事半功倍：手机远程调试效率倍增</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-10T09:26:46.000Z" title="发表于 2020-01-10 17:26:46">2020-01-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "长风破浪：Mach-O文件结构解读" 本篇文章将简要介绍手机远程调试。 1.手机远程调试 这篇文章介绍了探索Cydia的使用方式: "解锁潜力：探索Cydia的使用方式" 1. 要使用…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-4db5e476dbb6/" title="长风破浪：Mach-O文件结构解读"><img class="post-bg" src="/tech-blog/assets/images/d0f487b3a2a9.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="长风破浪：Mach-O文件结构解读" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-4db5e476dbb6/" title="长风破浪：Mach-O文件结构解读">长风破浪：Mach-O文件结构解读</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-09T05:16:13.000Z" title="发表于 2020-01-09 13:16:13">2020-01-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "一目了然: FISHHOOK原理乐趣无穷" 1.Mach-O Mach-O是iOS/MacOS系统上应用程序的文件格式,了解Mach-O文件格式,对于静态分析,动态调试很有意思,在掌握…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-0e0d734de52e/" title="一目了然: FISHHOOK原理乐趣无穷"><img class="post-bg" src="/tech-blog/assets/images/755e40cb104f.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="一目了然: FISHHOOK原理乐趣无穷" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-0e0d734de52e/" title="一目了然: FISHHOOK原理乐趣无穷">一目了然: FISHHOOK原理乐趣无穷</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-08T07:08:24.000Z" title="发表于 2020-01-08 15:08:24">2020-01-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "乘风破浪: iOS逆向HOOK的实践" 1.Fishhook Fishhook 上一篇文章，我们详细介绍了HOOK的原理，其中提到了Fishhook作为一种HOOK技术之一。 FISH…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-c2a8a54b3f0c/" title="乘风破浪: iOS逆向HOOK的实践"><img class="post-bg" src="/tech-blog/assets/images/e476233a4ed8.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="乘风破浪: iOS逆向HOOK的实践" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-c2a8a54b3f0c/" title="乘风破浪: iOS逆向HOOK的实践">乘风破浪: iOS逆向HOOK的实践</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-07T06:25:52.000Z" title="发表于 2020-01-07 14:25:52">2020-01-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "心旷神怡：挖掘LLDB调试的无限可能性" 前篇文章介绍了如何运用LLDB进行动态调试。在本篇中，我们将深入探讨HOOK的原理。 回顾之前的内容，我们已经了解了一些关于HOOK的知识，包…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-89c72582849a/" title="心旷神怡：挖掘LLDB调试的无限可能性"><img class="post-bg" src="/tech-blog/assets/images/4c54f7f7a5aa.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="心旷神怡：挖掘LLDB调试的无限可能性" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-89c72582849a/" title="心旷神怡：挖掘LLDB调试的无限可能性">心旷神怡：挖掘LLDB调试的无限可能性</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-01-06T06:46:47.000Z" title="发表于 2020-01-06 14:46:47">2020-01-06</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章: "千锤百炼：深入探讨Logos语法" 在上一篇文章中，我们详细介绍了Logos语法的使用，相信你已经能够自己创建一个tweak工程，并简单使用Logos语法进行iOS逆向工作。 本篇文章…</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/tech-blog/tags/iOS/page/2/">2</a><a class="page-number" href="/tech-blog/tags/iOS/page/3/">3</a><a class="extend next" rel="next" href="/tech-blog/tags/iOS/page/2/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div>
+          <ul class="card-category-list expandBtn" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/"><span class="card-category-list-name">iOS开发技术记录</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/"><span class="card-category-list-name">iOS逆向开发记录</span><span class="card-category-list-count">28</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tech-blog/tags/iOS/" style="font-size: 1.1em; color: #999">iOS</a></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

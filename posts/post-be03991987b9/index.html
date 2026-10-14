@@ -1,0 +1,585 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>技艺精进：iOS逆向工具精选 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1.debugserver和LLDB 倚天剑 屠龙刀 如果说IDA是倚天剑，那么LLDB就是屠龙刀。在iOS逆向工程中，两者相辅相成。 LLDB全称Low Level Debugger，由苹果出品，作…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="技艺精进：iOS逆向工具精选">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-be03991987b9/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="1.debugserver和LLDB 倚天剑 屠龙刀 如果说IDA是倚天剑，那么LLDB就是屠龙刀。在iOS逆向工程中，两者相辅相成。 LLDB全称Low Level Debugger，由苹果出品，作…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/551a037c8b23.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/551a037c8b23.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "技艺精进：iOS逆向工具精选",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-be03991987b9/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/551a037c8b23.webp",
+  "datePublished": "2019-12-04T15:23:09.000Z",
+  "dateModified": "2024-04-22T08:55:23.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-be03991987b9/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '技艺精进：iOS逆向工具精选',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">技艺精进：iOS逆向工具精选</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">技艺精进：iOS逆向工具精选</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2019-12-04T15:23:09.000Z" title="发表于 2019-12-04 23:23:09">2019-12-04</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/">iOS开发技术记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="1-debugserver和LLDB"><a href="#1-debugserver和LLDB" class="headerlink" title="1.debugserver和LLDB"></a>1.debugserver和LLDB</h2><p><img src="/tech-blog/assets/images/551a037c8b23.webp" alt="倚天剑" loading='lazy'></p>
+<p>倚天剑</p>
+<p><img src="/tech-blog/assets/images/7594f04ad4c0.webp" alt="屠龙刀" loading='lazy'></p>
+<p>屠龙刀</p>
+<ul>
+<li><p>如果说IDA是倚天剑，那么LLDB就是屠龙刀。在iOS逆向工程中，两者相辅相成。</p>
+</li>
+<li><p>LLDB全称Low Level Debugger，由苹果出品，作为Xcode内置的动态调试工具。</p>
+</li>
+<li><p>它不仅适用于C、C++、OC语言，还支持OSX、iOS以及iOS模拟器。</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/4cfafd89d66e.webp" alt="干将莫邪" loading='lazy'></p>
+<p>干将莫邪</p>
+<ul>
+<li>LLDB是运行在OSX中的，要想调试iOS，还需要另一个伙伴配合，他就是debugserver。可以说它们两个是宝剑界的干将莫邪。</li>
+</ul>
+<h4 id="1-1-debugserver"><a href="#1-1-debugserver" class="headerlink" title="1.1 debugserver"></a>1.1 debugserver</h4><ul>
+<li><p>debugserver运行在iOS上，作为服务端，实际执行LLDB传过来的命令，并将执行结果反馈给LLDB，显示给用户，即所谓的远程调试。</p>
+</li>
+<li><p>在默认情况下，iOS上并没有安装debugserver，只有设备连接过一次Xcode后，debugserver才会被Xcode安装到iOS的&#x2F;Developer&#x2F;usr&#x2F;bin目录下。</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/10c20a7b01a0.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="1-2-帮debugserver减肥"><a href="#1-2-帮debugserver减肥" class="headerlink" title="1.2 帮debugserver减肥"></a>1.2 帮debugserver减肥</h4><p><img src="/tech-blog/assets/images/09e400485458.webp" alt="设备-ARM-信息.png" loading='lazy'></p>
+<p>设备-ARM-信息.png</p>
+<ul>
+<li>我的手机是iphone5s–对应的ARM是arm64</li>
+<li>我们从手机&#x2F;Developer&#x2F;usr&#x2F;bin&#x2F;debugserver 把debugserver 下载到mac上</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp root@iOSIP:/Developer/usr/bin/debugserver /Users/mac-name/Desktop/debugserver</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>然后进行减肥操作(路径自己选择)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lipo -thin arm64 /Users/mac-name/Desktop/debugserver -output /Users/popo/Desktop/debugserver1/debugserver</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/29b74bb423ae.webp" alt="瘦身后的debugserver" loading='lazy'></p>
+<p>瘦身后的debugserver</p>
+<p><img src="/tech-blog/assets/images/8e510f5646e6.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>再接着，我们给debugserver添加task_for_pid权限。<br>1.因为通过Xcode安装的debugserver只能调试我们自己的App。<br>2.我们自己有App的源代码，就用不着debug了。<br>3.所以我们要添加task_for_pid权限。</li>
+</ul>
+<p><img src="/tech-blog/assets/images/8d3d41105c76.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>xml文件下载地址: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=http://iosre.com/ent.xml">http://iosre.com/ent.xml</a></li>
+<li>这个是在debugserver1目录下执行的终端命令(上图就是该目录下的文件)</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldid -Sent.xml debugserver  </span><br></pre></td></tr></table></figure>
+
+<p><code>注意:</code>如果没有安装ldid,要进行安装后,才可以使用用上面的命令执行.安装ldid的命令是:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install ldid</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>接着,我们在执行</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign -s - --entitlements ent.plist -f debugserver</span><br></pre></td></tr></table></figure>
+
+<p>以上就完成了对debugserver的处理</p>
+<ul>
+<li>经过处理的debugserver拷贝到iOS</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /Users/popo/Desktop/debugserver1/debugserver root@192.168.3.15:/usr/bin/debugserver</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们进入手机终端,对debugserver进行授权</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x /usr/bin/debugserver</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/f10a77740467.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>我们执行一下debugserver,测试一下是否配置成功,我们监听1234端口,开启SpringBoard–debugserver,看到下图结果,说明我们的配置是没问题了.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/a0ae0c0f60f6.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>接着我们就要使用LLDB,对1234端口进行调试.</li>
+</ul>
+<h4 id="1-3-LLDB"><a href="#1-3-LLDB" class="headerlink" title="1.3 LLDB"></a>1.3 LLDB</h4><ul>
+<li>在mac终端敲lldb,会进入lldb环境,我们输入help,就可以查看lldb调试命令.我们就可以开启调试模式.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/5e594910917b.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/249433f9a961.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/8af5f72e7ccf.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/c5c6bc88897c.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>首先启动debugserver</li>
+<li>在lldb环境输入:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process connect connect://手机ip:1234</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/913d230aeb7f.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>调试命令–1.image list</li>
+</ul>
+<p><img src="/tech-blog/assets/images/8193c4c1bb8a.webp" alt="image list -o -f" loading='lazy'></p>
+<p>image list -o -f</p>
+<p>--用于列举当前进程中的所有模块<br>--每次进程启动时,同一进程的所有模块在虚拟内存中的起始地址都会产生随机偏移.</p>
+<ul>
+<li><p>调试命令–2.breakpoint<br>--2.1用于设置断点<br>--2.2用法:<br>-- (1) b function<br>-- (2) br s -a address<br>-- (3) br s -a ‘ASLROffset + address’<br>--2.3使用:<br>--第1种:在<code>函数的起始位置</code>设置断点<br>--(lldb) b NSLog<br>--第2&#x2F;3种是在<code>地址处</code>设置断点<br>--(lldb) br s -a 0xCCCCC<br>--2.4注意:<br>--当进程停在断点上时,断点所在的哪一行代码并没有执行.这里和我们在xcode打断点是一样的.</p>
+</li>
+<li><p>调试命令–3.print<br>--LLDB的主要功能之一是”在程序停止的时候检查程序内部发生的事”<br>--通过print命令,我们可以打印某处的值</p>
+</li>
+<li><p>调试命令–4.nexti与stepi<br>--它们的作用都是执行下一条机器指令<br>--区别:nexti不进入函数体,stepi会进入函数体<br>--简写: ni 与si</p>
+</li>
+<li><p>调试命令–5.register write<br>--用于给制定的寄存器赋值,从而对程序进行改动,观察程序执行过程变化</p>
+</li>
+</ul>
+<h2 id="2-dumpdecrypted–砸壳工具"><a href="#2-dumpdecrypted–砸壳工具" class="headerlink" title="2.dumpdecrypted–砸壳工具"></a>2.dumpdecrypted–砸壳工具</h2><h4 id="2-1-dumpdecrypted的产生"><a href="#2-1-dumpdecrypted的产生" class="headerlink" title="2.1 dumpdecrypted的产生"></a>2.1 dumpdecrypted的产生</h4><ul>
+<li>由于AppStore下载的App是被苹果加密过的,可执行文件被套上一层保护壳</li>
+<li>class-dump无法作用于加密过的App</li>
+<li>想要获取头文件,需要先解密App的可执行文件,也叫砸壳</li>
+<li>dumpdecrypted就是由越狱社区的知名人士 Stefan Esser 出品的一款砸壳工具,被越狱社区广泛运用在iOS逆向工程研究中.</li>
+</ul>
+<h4 id="2-2-dumpdecrypted的使用"><a href="#2-2-dumpdecrypted的使用" class="headerlink" title="2.2 dumpdecrypted的使用"></a>2.2 dumpdecrypted的使用</h4><ul>
+<li><p>2种方式下载dumpdecrypted:<br>第一种:<br>下载地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/stefanesser/dumpdecrypted">https://github.com/stefanesser/dumpdecrypted</a>  </p>
+<p><img src="/tech-blog/assets/images/d4c9eb9d1076.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<p>第二种:<br>先确定下载的目录(desktop&#x2F;dump目录下):</p>
+<p><img src="/tech-blog/assets/images/57fb4a2c1995.webp" alt="文章配图" loading='lazy'></p>
+<p>下载执行命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git://github.com/stefanesser/dumpdecrypted</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>接着对下载好的文件进行编译dumpdecrypted.dylib</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd dumpdecrypted/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/9b19a1e1ebf9.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/b9cc6ebf2eea.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li><p>找到要砸壳的APP的Documents目录路径</p>
+<p><img src="/tech-blog/assets/images/df00e610132d.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<p>估计你看到这些,就会很头疼了,到底哪个是呢?</p>
+<ul>
+<li><p>我们借助强大的Cycript,让App告诉我们它在哪里,直接找到它的的根目录</p>
+<p><img src="/tech-blog/assets/images/e31dfd0ee9f0.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>锁定该目录 065B70ED-FCD1-4874-B4A3-86F1B765945F</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/a60bf1d1fa4d.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>将dumpdecrypted.dylib拷贝到Documents目录下.<br>有两种方式拷贝:<br>第一种:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /Users/popo/Desktop/dump/dumpdecrypted/dumpdecrypted.dyli root@192.168.3.15:var/mobile/Containers/Data/Application/065B70ED-FCD1-4874-B4A3-86F1B765945F/Documents/dumpdecrypted.dylib</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/67cb9cc22105.webp" alt="文章配图" loading='lazy'></p>
+<p>第二种:</p>
+<p><img src="/tech-blog/assets/images/b83eb208bfa8.webp" alt="文章配图" loading='lazy'></p>
+<p>以上两种方式,只需要拷贝成功就行,选择那种,根据个人喜好.</p>
+<ul>
+<li>开始砸壳</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/containers/Bundle/Application/9AF4167F-D4AA-4DBB-A67D-A956CCDBDEF9/WeChat.app/WeChat mach-o decryption dumper</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/f209be3b6000.webp" alt="文章配图" loading='lazy'></p>
+<p>砸壳失败了,分析一下原因:<br><code>required code signature missing for &#39;dumpdecrypted.dylib&#39;</code><br>由于没有对dumpdecrypted.dylib签名,<br>我们没有砸壳成功.<br>其实出现问题的时候就是涨经验的时候,<br>遇到问题就解决问题.<br>我们把问题解决后接着砸壳</p>
+<ul>
+<li>解决问题是对dumpdecrypted.dylib文件签名,首先获取可签名的证书</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">security find-identity -v -p codesigning </span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/bf1d2c935887.webp" alt="获取可签名的证书" loading='lazy'></p>
+<p>获取可签名的证书</p>
+<p>然后为dumpecrypted.dylib签名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign --force --verify --verbose --sign &quot;iPhone Developer: `(开发这信息)`&quot; dumpdecrypted.dylib </span><br></pre></td></tr></table></figure>
+
+<p>然后在上传到手机</p>
+<ul>
+<li>进行第二次砸壳</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/containers/Bundle/Application/9AF4167F-D4AA-4DBB-A67D-A956CCDBDEF9/WeChat.app/WeChat mach-o decryption dumper</span><br></pre></td></tr></table></figure>
+
+<p>在当前目录下会生成WeChat.decrypted文件</p>
+<ul>
+<li><p>砸壳完成,然后你就可以拿着砸壳文件就行class-dump,静态分析汇编代码了.</p>
+</li>
+<li><p>问题:dumpdecrypted为什么拷贝到Documents目录下操作?</p>
+<ul>
+<li>StoreApp对沙盒以外的绝大数目录没有写权限.</li>
+<li>Documents目录下使用dumpdecrypted.dylib时,保证它能在当前目录下写一个decrypted文件.</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-OpenSSH"><a href="#4-OpenSSH" class="headerlink" title="4.OpenSSH"></a>4.OpenSSH</h2><p>“切磋技艺：iOS逆向工具精选”地址: <a href="/tech-blog/posts/post-a2a8aa870614/">https://www.jianshu.com/p/beea9f2b9f7d</a><br>提到了远程连接手机终端.<br>这里重点讲解一下.  </p>
+<p><img src="/tech-blog/assets/images/a98d57de02c3.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>我们会经常用到两个命令ssh 和scp</li>
+<li>ssh用于远程登录</li>
+<li>scp远程拷贝文件</li>
+<li>ssh使用:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh user@手机ip</span><br></pre></td></tr></table></figure>
+
+<p>我们上面连接手机时,使用到了这个命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.3.15</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>scp使用:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp user@手机ip:/path/to/remoteFile /path/to/localFile</span><br></pre></td></tr></table></figure>
+
+<p>我们拷贝dumpdecrypted.dylib 到手机:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /Users/popo/Desktop/dump/dumpdecrypted/dumpdecrypted.dyli root@192.168.3.15:var/mobile/Containers/Data/Application/065B70ED-FCD1-4874-B4A3-86F1B765945F/Documents/dumpdecrypted.dylib</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装OpenSSH后需要注意修改默认登录密码:alpine.</li>
+<li>iOS上的用户有2个<ul>
+<li>root</li>
+<li>mobile</li>
+</ul>
+</li>
+<li>修改密码,执行命令</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">passwd root</span><br><span class="line"></span><br><span class="line">passwd mobile</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-usbmuxd"><a href="#5-usbmuxd" class="headerlink" title="5.usbmuxd"></a>5.usbmuxd</h2><p>“切磋技艺：iOS逆向工具精选”: <a href="/tech-blog/posts/post-a2a8aa870614/">https://www.jianshu.com/p/beea9f2b9f7d</a><br>提到了有线无线连接远程终端.<br>这里也介绍一下.</p>
+<ul>
+<li>使用usb连接比无线连接,稳定,传输快.</li>
+<li>这是一款把本地OSX&#x2F;Windows端口转发到远程iOS端口的工具usbmuxd.</li>
+<li>下载配置usbmuxd<br>下载地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=http://cgit.sukimashita.com/usbmuxd.git/snapshot/usbmuxd-">http://cgit.sukimashita.com/usbmuxd.git/snapshot/usbmuxd-</a> 1.0.8.tar.gz</li>
+</ul>
+<p><img src="/tech-blog/assets/images/1a850af179b9.webp" alt="文章配图" loading='lazy'></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python tcprelay.py -t   远程iOS上的端口 :  本地OSX/Windows上的端口   </span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/b804349e791c.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>ssh到iOS中</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@192.168.31.5 -p 54322</span><br></pre></td></tr></table></figure>
+
+<p>就可以使用usb连线终端了.</p>
+<h2 id="6-iFile–iOS版的Finder"><a href="#6-iFile–iOS版的Finder" class="headerlink" title="6.iFile–iOS版的Finder"></a>6.iFile–iOS版的Finder</h2><ul>
+<li><p>iFile是iOS上一款非常强大的文件管理App,可以看做是iOS版的Finder.</p>
+<p><img src="/tech-blog/assets/images/086e762def72.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/03d576a49797.webp" alt="文章配图" loading='lazy'></p>
+<h2 id="7-clutch–砸壳"><a href="#7-clutch–砸壳" class="headerlink" title="7.clutch–砸壳"></a>7.clutch–砸壳</h2><p>源码地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/KJCracks/Clutch">https://github.com/KJCracks/Clutch</a></p>
+<h4 id="7-1-源码下载"><a href="#7-1-源码下载" class="headerlink" title="7.1 源码下载"></a>7.1 源码下载</h4><p><img src="/tech-blog/assets/images/03495fd4dac8.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/a917e9cc5ad2.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="7-2-编译工具"><a href="#7-2-编译工具" class="headerlink" title="7.2 编译工具"></a>7.2 编译工具</h4><p>用Xcode打开源码<br>编译命令 command + B</p>
+<p><img src="/tech-blog/assets/images/fc96e61f2582.webp" alt="文章配图" loading='lazy'></p>
+<p><img src="/tech-blog/assets/images/c44449262ecc.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="7-3-拷贝到手机使用"><a href="#7-3-拷贝到手机使用" class="headerlink" title="7.3 拷贝到手机使用"></a>7.3 拷贝到手机使用</h4><ul>
+<li><p>拷贝方法一:</p>
+<p><img src="/tech-blog/assets/images/92e9c3153b58.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>拷贝方法二:</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp Clutch/clutch root@设备ip:/usr/bin/</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-4-ssh到越狱机-准备砸壳"><a href="#7-4-ssh到越狱机-准备砸壳" class="headerlink" title="7.4 ssh到越狱机,准备砸壳"></a>7.4 ssh到越狱机,准备砸壳</h4><ul>
+<li><p>砸壳钱先认识这些命令+参数的作用</p>
+<p><img src="/tech-blog/assets/images/7a696610ab96.webp" alt="文章配图" loading='lazy'></p>
+<p>1.clutch -b 砸壳后的文件是二进制文件<br>2.clutch -d 砸壳后的文件是ipa文件<br>3.clutch -i 查看安装的应用<br>4.clutch –clean &#x2F;var&#x2F;tmp&#x2F;clutch 目录清理<br>5.clutch –version 显示版本并退出<br>6.clutch –? 显示帮助并退出</p>
+</li>
+<li><p>没有执行权限,需要授权</p>
+<p><img src="/tech-blog/assets/images/60fa8046dcb1.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>执行clutch -i (查看手机安装的App)</p>
+<p><img src="/tech-blog/assets/images/0bc81233837e.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>砸壳</p>
+<p><img src="/tech-blog/assets/images/531f55bdf997.webp" alt="砸壳两种方式" loading='lazy'></p>
+<p>砸壳两种方式</p>
+</li>
+</ul>
+<p>砸壳第一种执行命令(clutch -d app序列号)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clutch -d 1</span><br></pre></td></tr></table></figure>
+
+<p>砸壳第二种执行命令(clutch -d app包名)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clutch -d hk.itools.appe</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Zipping WeChat.app</span><br><span class="line"># Swapping architectures..</span><br><span class="line"># DONE: /private/var/mobile/Documents/Dumped/hk.itools.appe-iOS7.0-(Clutch-2.0.4).ipa</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>砸壳后的ipa所在目录</p>
+<p><img src="/tech-blog/assets/images/60f5506ca37c.webp" alt="砸壳后的ipa" loading='lazy'></p>
+<p>砸壳后的ipa</p>
+<p>砸壳到这里,就完成了…</p>
+</li>
+</ul>
+<h2 id="8-fruda-ios-dump-一条命令完成iOS应用砸壳"><a href="#8-fruda-ios-dump-一条命令完成iOS应用砸壳" class="headerlink" title="8.fruda-ios-dump 一条命令完成iOS应用砸壳"></a>8.fruda-ios-dump 一条命令完成iOS应用砸壳</h2><h4 id="8-1-Frida"><a href="#8-1-Frida" class="headerlink" title="8.1 Frida"></a>8.1 Frida</h4><p><img src="/tech-blog/assets/images/92ceedb5a26b.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>Frida的使用场景:<br>1.hook特定函数并更改返回值<br>2.分析定制协议,同事其动态嗅探,解密<br>3.应用调试<br>4.在iOS应用上dump类和方法信息</li>
+</ul>
+<h4 id="8-2-手机设备安装Frida"><a href="#8-2-手机设备安装Frida" class="headerlink" title="8.2 手机设备安装Frida"></a>8.2 手机设备安装Frida</h4><ul>
+<li><p>首先打开手机设备,在Cydia中添加源</p>
+<p><img src="/tech-blog/assets/images/fac022e274f1.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://build.frida.re</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>然后在Cydia中搜索Frida,进行安装.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/00384325e817.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="8-3-在mac安装Frida"><a href="#8-3-在mac安装Frida" class="headerlink" title="8.3 在mac安装Frida"></a>8.3 在mac安装Frida</h4><ul>
+<li>终端执行:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install frida</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果报下面错误:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Uninstalling a distutils installed project (six) has been deprecated and will be</span><br><span class="line">removed in a future version. This is due to the fact that uninstalling a distutils </span><br><span class="line">project will only partially uninstall the project.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们执行下面命令:<br>原因:Apple预安装的这个six库出于安全原因被设置为sudo也不可以执行操作，所以需要依赖于高版本的库就需要更新six.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install frida –upgrade –ignore-installed six</span><br></pre></td></tr></table></figure>
+
+<p>到这一步,环境配置完成了.</p>
+<h4 id="8-4-配置frida-ios-dump环境"><a href="#8-4-配置frida-ios-dump环境" class="headerlink" title="8.4 配置frida-ios-dump环境"></a>8.4 配置frida-ios-dump环境</h4><p>github地址: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/AloneMonkey/frida-ios-dump">https://github.com/AloneMonkey/frida-ios-dump</a></p>
+<ul>
+<li>下载源码</li>
+<li>安装依赖</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install -r requirements.txt --upgrade (Python 2.7)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改dump.py参数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /opt/dump/frida-ios-dump/dump.py</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/911b5acf79a1.webp" alt="修改参数" loading='lazy'></p>
+<p>修改参数</p>
+<h4 id="8-5-打开终端-端口转发"><a href="#8-5-打开终端-端口转发" class="headerlink" title="8.5 打开终端,端口转发"></a>8.5 打开终端,端口转发</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Run usbmuxd/iproxy SSH forwarding over USB (Default 2222 -&gt; 22). e.g.</span><br><span class="line">执行下面的命令:</span><br><span class="line">iproxy 2222 22</span><br></pre></td></tr></table></figure>
+
+<h4 id="8-6-进行砸壳"><a href="#8-6-进行砸壳" class="headerlink" title="8.6 进行砸壳"></a>8.6 进行砸壳</h4><p>比如 一键砸壳(WeChat)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./dump.py WeChat</span><br></pre></td></tr></table></figure>
+
+<p>这里就完成了砸壳.</p>
+<h2 id="9-Reveal–一款Mac下调试iOS应用的软件"><a href="#9-Reveal–一款Mac下调试iOS应用的软件" class="headerlink" title="9.Reveal–一款Mac下调试iOS应用的软件"></a>9.Reveal–一款Mac下调试iOS应用的软件</h2><p>下载地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/LK26/Reverse-tool-one/blob/master/Reveal.dmg">https://github.com/LK26/Reverse-tool-one/blob/master/Reveal.dmg</a></p>
+<h4 id="9-1-Reveal"><a href="#9-1-Reveal" class="headerlink" title="9.1 Reveal"></a>9.1 Reveal</h4><p><img src="/tech-blog/assets/images/35cae5df4d55.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>Reveal能够在运行时调试和修改iOS应用程序,而且它能连接到应用程序,并允许开发者编辑各种用户界面参数,而且会立即反应在程序的UI上.</li>
+<li>Reveal会扫描其网路中关联的应用程序,并让开发者选择连接其中之一,当连接到一个应用程序后,Reveal将显示其UI,其中包括大量的参数和设置.</li>
+<li>除了解析出UI参数外,开发者可以轻松的检查UI组件的分层,并在其层次结构中选择特定元素.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/1d36aaf8b78d.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="9-2-安装和使用"><a href="#9-2-安装和使用" class="headerlink" title="9.2 安装和使用"></a>9.2 安装和使用</h4><ul>
+<li><p>在越狱机中,打开cydia,搜索Reveal Loader</p>
+<p><img src="/tech-blog/assets/images/83db7baaa356.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>点击安装(我这里已经安装)</p>
+<p><img src="/tech-blog/assets/images/5dbca9eba294.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>打开应用设置,找到Reveal</p>
+<p><img src="/tech-blog/assets/images/0cdfda3e3838.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>点击进入Reveal</p>
+<p><img src="/tech-blog/assets/images/d6eeff44577d.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>开启你要Reveal的app</p>
+<p><img src="/tech-blog/assets/images/df15c746b57f.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>这里在手机的设置完成了,我们在Mac上打开Reveal,找到Help—&gt;&gt;Show Reveal Library in Finder—&gt;&gt;iOS Library</p>
+<p><img src="/tech-blog/assets/images/3162c9485ddc.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>找到RevealServer.framework</p>
+<p><img src="/tech-blog/assets/images/cdea9eded1d7.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>Reveal新版本,iOS-Libraries文件中不再是libReveal.dylib了,<br>而是RevelServer.framework,<br>这里不用担心.<br>我们只需要把文件名改掉就OK了.</p>
+</li>
+</ul>
+<p>我们执行下面的命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /Users/用户名/Desktop/RevealServer.framework </span><br><span class="line">  root@192.168.3.15:/Library/RHRevealLoader/libReveal.dylib</span><br></pre></td></tr></table></figure>
+
+<p>拷贝到手机.</p>
+<ul>
+<li>如果这些完成了,你就可以对已经勾选的app页面结构进行分析了.<br><code>注意</code>:让手机 和 电脑处在同一局域网下,手机打开需要查看的 App, Mac上的 Reveal 选择需要查看的App,就开始你的分析之旅吧,哈哈~~</li>
+</ul>
+<h2 id="10-软件源"><a href="#10-软件源" class="headerlink" title="10.软件源"></a>10.软件源</h2><p><img src="/tech-blog/assets/images/d0a371641c60.webp" alt="文章配图" loading='lazy'></p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f2455fe3b016">技艺精进：iOS逆向工具精选</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-debugserver%E5%92%8CLLDB"><span class="toc-text">1.debugserver和LLDB</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-debugserver"><span class="toc-text">1.1 debugserver</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E5%B8%AEdebugserver%E5%87%8F%E8%82%A5"><span class="toc-text">1.2 帮debugserver减肥</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-LLDB"><span class="toc-text">1.3 LLDB</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-dumpdecrypted%E2%80%93%E7%A0%B8%E5%A3%B3%E5%B7%A5%E5%85%B7"><span class="toc-text">2.dumpdecrypted–砸壳工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-dumpdecrypted%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="toc-text">2.1 dumpdecrypted的产生</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-dumpdecrypted%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">2.2 dumpdecrypted的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-OpenSSH"><span class="toc-text">4.OpenSSH</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-usbmuxd"><span class="toc-text">5.usbmuxd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-iFile%E2%80%93iOS%E7%89%88%E7%9A%84Finder"><span class="toc-text">6.iFile–iOS版的Finder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-clutch%E2%80%93%E7%A0%B8%E5%A3%B3"><span class="toc-text">7.clutch–砸壳</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="toc-text">7.1 源码下载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-%E7%BC%96%E8%AF%91%E5%B7%A5%E5%85%B7"><span class="toc-text">7.2 编译工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-3-%E6%8B%B7%E8%B4%9D%E5%88%B0%E6%89%8B%E6%9C%BA%E4%BD%BF%E7%94%A8"><span class="toc-text">7.3 拷贝到手机使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-4-ssh%E5%88%B0%E8%B6%8A%E7%8B%B1%E6%9C%BA-%E5%87%86%E5%A4%87%E7%A0%B8%E5%A3%B3"><span class="toc-text">7.4 ssh到越狱机,准备砸壳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-fruda-ios-dump-%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%88%90iOS%E5%BA%94%E7%94%A8%E7%A0%B8%E5%A3%B3"><span class="toc-text">8.fruda-ios-dump 一条命令完成iOS应用砸壳</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#8-1-Frida"><span class="toc-text">8.1 Frida</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-%E6%89%8B%E6%9C%BA%E8%AE%BE%E5%A4%87%E5%AE%89%E8%A3%85Frida"><span class="toc-text">8.2 手机设备安装Frida</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-3-%E5%9C%A8mac%E5%AE%89%E8%A3%85Frida"><span class="toc-text">8.3 在mac安装Frida</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-4-%E9%85%8D%E7%BD%AEfrida-ios-dump%E7%8E%AF%E5%A2%83"><span class="toc-text">8.4 配置frida-ios-dump环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-5-%E6%89%93%E5%BC%80%E7%BB%88%E7%AB%AF-%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-text">8.5 打开终端,端口转发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-6-%E8%BF%9B%E8%A1%8C%E7%A0%B8%E5%A3%B3"><span class="toc-text">8.6 进行砸壳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-Reveal%E2%80%93%E4%B8%80%E6%AC%BEMac%E4%B8%8B%E8%B0%83%E8%AF%95iOS%E5%BA%94%E7%94%A8%E7%9A%84%E8%BD%AF%E4%BB%B6"><span class="toc-text">9.Reveal–一款Mac下调试iOS应用的软件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#9-1-Reveal"><span class="toc-text">9.1 Reveal</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-2-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-text">9.2 安装和使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="toc-text">10.软件源</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

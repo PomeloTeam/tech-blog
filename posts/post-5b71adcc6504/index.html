@@ -1,0 +1,394 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>探秘工具:MacOS工具探索 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章深入探讨了知行合一：iOS逆向文件类型分析,为我们打下了坚实基础。 本文将进一步介绍iOS逆向工具，既有对已有工具的深入剖析，也会引入一些新的工具。若您尚未了解前文内容，建议先行查阅，以便更…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探秘工具:MacOS工具探索">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-5b71adcc6504/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章深入探讨了知行合一：iOS逆向文件类型分析,为我们打下了坚实基础。 本文将进一步介绍iOS逆向工具，既有对已有工具的深入剖析，也会引入一些新的工具。若您尚未了解前文内容，建议先行查阅，以便更…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/4d07b5321142.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/4d07b5321142.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "探秘工具:MacOS工具探索",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-5b71adcc6504/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/4d07b5321142.webp",
+  "datePublished": "2019-12-20T06:56:04.000Z",
+  "dateModified": "2024-04-09T22:27:33.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-5b71adcc6504/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '探秘工具:MacOS工具探索',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">探秘工具:MacOS工具探索</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">探秘工具:MacOS工具探索</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2019-12-20T06:56:04.000Z" title="发表于 2019-12-20 14:56:04">2019-12-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><ul>
+<li>上一篇文章深入探讨了<a href="/tech-blog/posts/post-7bde5c82d851/">知行合一：iOS逆向文件类型分析</a>,为我们打下了坚实基础。</li>
+</ul>
+<p>本文将进一步介绍iOS逆向工具，既有对已有工具的深入剖析，也会引入一些新的工具。若您尚未了解前文内容，建议先行查阅，以便更好地理解本文内容。</p>
+<h4 id="1-iFunBox"><a href="#1-iFunBox" class="headerlink" title="1. iFunBox"></a>1. iFunBox</h4><p><img src="/tech-blog/assets/images/4d07b5321142.webp" alt="文章配图" loading='lazy'></p>
+<p>下载地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=http://www.i-funbox.com/zh-cn/index.html">iFunBox</a></p>
+<ul>
+<li><p>iFunBox是一款小巧的iPhone文件管理软件.</p>
+</li>
+<li><p>管理多媒体文件<br>使用iFunbox的快速功能入口可以轻松管理设备中的应用，照片，音乐，手机铃声，视频和语音备忘录，从此对你的多媒体文件一览无余。</p>
+</li>
+<li><p>iOS根文件系统<br>iFunbox帮您轻松深究一个越狱iOS设备的根文件系统，提供了快速浏览，即时文件预览及快速文件搜索，可以自定义SpringBoard个性主题。</p>
+</li>
+<li><p>移动硬盘<br>在iFunbox的 “我的设备” 或 “工具箱” 中，有一个叫 “移动硬盘” 的文件夹，可以支持存放任何类型和大小的文件。</p>
+</li>
+<li><p>USB 隧道<br>像iPhone的USB隧道套件，USB隧道地图打开TCP端口上的设备到PC，使PC连接到他们的通信程序。</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/e1ea9ec3898e.webp" alt="iFunBox" loading='lazy'></p>
+<p>iFunBox</p>
+<p>iFunBox是一款老牌iOS文件管理工具,可以非常方便地操作iOS中的文件.</p>
+<p>如果手机已经连接mac,iFunBox会显示一下内容</p>
+<ul>
+<li>User Applications</li>
+<li>App File Sharing</li>
+<li>System Applications</li>
+<li>Shortcuts</li>
+<li>General Storage</li>
+<li>Camera</li>
+<li>Ringtones</li>
+<li>iBooks</li>
+<li>Raw File System</li>
+</ul>
+<p>通过该软件就可以找到手机目录,为后面的逆向开发做铺垫.</p>
+<ul>
+<li><p>越狱准备条件(系统架构师RAM64,最低iPhone5s的机器.)<br>这是我之前接的图,设备是iPhone5s,系统是iOS7.1.1,这个是我没有升级之前的手机,完美越狱.<br>现在我的这台iPhone5s,已经升级到了12.3的系统,没有办法完美越狱.<br>如果你有一台系统是8.3.3的系统就很完美了.<br>我建议大家准备一台可以测试的手机,尽量不要在自己使用的手机上越狱.</p>
+</li>
+<li><p>注意</p>
+<p><img src="/tech-blog/assets/images/75dfa6f89054.webp" alt="文章配图" loading='lazy'></p>
+</li>
+</ul>
+<p>越狱iOS必须安装“Apple File Conduit 2” ,这样iFunBox才能浏览iOS全系统文件.</p>
+<h4 id="2-pp助手"><a href="#2-pp助手" class="headerlink" title="2.pp助手"></a>2.pp助手</h4><p><img src="/tech-blog/assets/images/84e81e75def3.webp" alt="pp助手" loading='lazy'></p>
+<p>pp助手</p>
+<ul>
+<li>PP助手正版是一款无需越狱，无需Apple ID，免费下载安装海量正版资源应用，同时支持iPhone、iPad、iTouch等iOS设备的软件、游戏下载安装和管理工具。</li>
+</ul>
+<p><img src="/tech-blog/assets/images/4a14d663b248.webp" alt="pp助手-包括越狱应用及正版应用" loading='lazy'></p>
+<p>pp助手-包括越狱应用及正版应用</p>
+<ul>
+<li><p>pp助手中包含越狱应用及正版应用<br>越狱应用直接脱壳,我们可以不必砸壳,直接拿来使用<br>正版应用(AppStore加壳应用),需要手动脱壳(砸壳),我们才可以使用</p>
+</li>
+<li><p>安装pp助手的目的:<br>1.方便获取已经越狱的应用的ipa<br>2.可以通过ipa包,获取到ipa中的图片资源</p>
+</li>
+<li><p>如何获取ipa包?<br>我们随便下载一款软件</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/66cdb0b33fd2.webp" alt="已经下载好的应用" loading='lazy'></p>
+<p>已经下载好的应用</p>
+<p><img src="/tech-blog/assets/images/123921fa5bc1.webp" alt="应用ipa包" loading='lazy'></p>
+<p>应用ipa包</p>
+<p>这里我们获取到了ipa包.</p>
+<h4 id="3-爱思助手"><a href="#3-爱思助手" class="headerlink" title="3.爱思助手"></a>3.爱思助手</h4><p>下载爱思助手安装到电脑<br>下载地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://www.i4.cn">https://www.i4.cn</a></p>
+<p><img src="/tech-blog/assets/images/1161ae8351d7.webp" alt="爱思助手" loading='lazy'></p>
+<p>爱思助手</p>
+<p>我曾经在第一篇文章介绍到了手机越狱,提到了两种越狱方式.(针对不同系统),文章地址: <a href="/tech-blog/posts/post-887edaf83222/">iOS逆向之手机越狱</a></p>
+<ul>
+<li>爱思助手一款多功能软件,同样具备下载ipa的功能</li>
+<li>可以帮助您的设备越狱,越狱一定要在系统允许的范围内,才可以越狱</li>
+</ul>
+<p><img src="/tech-blog/assets/images/cfa4f8c17cd9.webp" alt="越狱功能" loading='lazy'></p>
+<p>越狱功能</p>
+<ul>
+<li>打开爱思助手</li>
+</ul>
+<p><img src="/tech-blog/assets/images/f9d254cf3e36.webp" alt="爱思助手" loading='lazy'></p>
+<p>爱思助手</p>
+<ul>
+<li><p>手机连接后进行越狱操作</p>
+<p><img src="/tech-blog/assets/images/990fb079c7dc.webp" alt="越狱1" loading='lazy'></p>
+<p>越狱1</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/d67986d7c600.webp" alt="越狱2" loading='lazy'></p>
+<p>越狱2</p>
+<p>选择你要越狱的系统进行越狱,安装软件提示进行越狱.</p>
+<ul>
+<li>证书验证 <code>注意</code><ul>
+<li><p>当你手机越狱完成后,手机会装一个yalu(系统不同,越狱的软件不同</p>
+</li>
+<li><p>我记得iOS9之前是完美越狱,无论手机是否重启,越狱功能依然存在</p>
+</li>
+<li><p>iOS9就是非完美越狱</p>
+</li>
+<li><p>iOS9-10系统,越狱后安装的是盘古,每次重启后,打开盘古进行越狱,如果一次越狱不成就再越狱一次,直到越狱成功.</p>
+<p><img src="/tech-blog/assets/images/31fc77e0954a.webp" alt="盘古越狱" loading='lazy'></p>
+<p>盘古越狱</p>
+</li>
+<li><p>iOS10系统,越狱后安装的是yalu的软件,依然是非完美越狱,越狱同上.</p>
+<p><img src="/tech-blog/assets/images/fbe67cd68f00.webp" alt="yalu越狱" loading='lazy'></p>
+<p>yalu越狱</p>
+</li>
+<li><p>iOS11系统,越狱后安装的是electra,越狱同上.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/da6857ffb0ae.webp" alt="electra越狱" loading='lazy'></p>
+<p>electra越狱</p>
+<ul>
+<li><p>iOS12系统,越狱后安装的是loader的软件,越狱开篇文章有介绍,文章地址: <a href="/tech-blog/posts/post-887edaf83222/">iOS逆向之手机越狱</a>  </p>
+<p><img src="/tech-blog/assets/images/c7acf51a5a87.webp" alt="heckra1n" loading='lazy'></p>
+<p>heckra1n</p>
+</li>
+<li><p>这些系统越狱后,都会安装越狱软件,当您重启后可以重新越狱.当第一次打开这些软件,你需要如下图进行软件的证书验证</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/9907d77a4d55.webp" alt="证书验证" loading='lazy'></p>
+<p>证书验证</p>
+<ul>
+<li>如果证书验证成功,软件就可以正常使用了.</li>
+</ul>
+<h4 id="4-iTools"><a href="#4-iTools" class="headerlink" title="4.iTools"></a>4.iTools</h4><p>我前几篇文章中有介绍iTools,文章地址: <a href="/tech-blog/posts/post-367b420c254b/">iOS逆向之文件系统结构</a></p>
+<p><img src="/tech-blog/assets/images/c6e4d7c1728b.webp" alt="iTools" loading='lazy'></p>
+<p>iTools</p>
+<ul>
+<li>可以通过iTools查看系统文件的目录(前提必须是越狱的系统)</li>
+<li>具体使用,大家下载后亲自动手操作</li>
+</ul>
+<h4 id="5-抓包工具–Charles"><a href="#5-抓包工具–Charles" class="headerlink" title="5.抓包工具–Charles"></a>5.抓包工具–Charles</h4><p><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://www.charlesproxy.com">Charles官网地址</a></p>
+<p><img src="/tech-blog/assets/images/75850780a21f.webp" alt="Charle" loading='lazy'></p>
+<p>Charle</p>
+<ul>
+<li>大家都叫它青花瓷,这个名字还蛮有意思,mac系统使用真的很不错的软件,是一款抓取数据的工具.</li>
+<li>当时,接触这款软件的原因,是通过抓取AppStore应用商店的工具,当时研究ASO优化,为了抓包数据,分析数据走向及数据包含的设备参数.</li>
+<li>当时遇到了很多问题,由于系统对应用数据进行了保护措施,研究了很多才配置好Charles的数据抓包,我写的文章:抓包工具–charles(青花瓷)及获取AppStore数据包中有详细介绍,文章地址:<a href="/tech-blog/posts/post-309685b38986/">探索未知：倾听青花瓷Charles在AppStore的轻声细语</a></li>
+<li>文章中介绍了如何配置http抓包,https证书配置后抓包及AppStore的数据如何获取,获取的解决方案.</li>
+<li>大家可以看一下这篇文章,这里就不再详细介绍了.</li>
+</ul>
+<h4 id="6-Wireshark-抓包工具"><a href="#6-Wireshark-抓包工具" class="headerlink" title="6.Wireshark (抓包工具)"></a>6.Wireshark (抓包工具)</h4><p><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://www.wireshark.org/download.html">Wireshark官网地址</a></p>
+<p><img src="/tech-blog/assets/images/6212b64c2019.webp" alt="Wireshark" loading='lazy'></p>
+<p>Wireshark</p>
+<ul>
+<li>Wireshark也是一款抓包工具,功能更加强大,可以抓取各种数据包,TCP,UDP等;</li>
+<li>有缘了解它,主要工作中为了抓取服务器加速成功后,进入游戏是否可以抓到UDP包,从而降低游戏中的延迟.所以,通过Wireshark抓取游戏中数据的流动,从而分析服务器是否加速成功.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/22b5f3944766.webp" alt="Wireshark主界面" loading='lazy'></p>
+<p>Wireshark主界面</p>
+<p>图中,我们看到en5,en0等信息,这些是物理网卡<br>我们通过指定或者确定的网卡,进行数据的抓包,可以抓取数据的走向以及流动,服务器是否有响应,作出准确的判断.</p>
+<ul>
+<li>左上角是暂停,开始操作</li>
+<li>输入框通过关键字进行信息过滤,方便数据查找</li>
+<li>更多工具的使用不再详细介绍,大家可以自己动手练习一下,更多资料可以亲自动手搜索.</li>
+</ul>
+<h4 id="7-Reveal-一款Mac下调试iOS应用的软件"><a href="#7-Reveal-一款Mac下调试iOS应用的软件" class="headerlink" title="7.Reveal (一款Mac下调试iOS应用的软件)"></a>7.Reveal (一款Mac下调试iOS应用的软件)</h4><p><img src="/tech-blog/assets/images/3730c9ede48c.webp" alt="截屏2019-12-23下午4.20.31.png" loading='lazy'></p>
+<p>截屏2019-12-23下午4.20.31.png</p>
+<p>Reveal官网地址:<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=%255Bhttps://revealapp.com/%255D(https://revealapp.com/)">Reveal</a></p>
+<p>通过高级可视化、全面的检查器和动态修改应用程序的能力，您可以在几秒钟内调试视图布局和呈现问题。</p>
+<ul>
+<li><p>Reveal是一款运行在Mac OS上的应用，现在有免费的Beta版本可供下载。要调试iOS应用，开发者要将应用程序与Reveal安装的框架层关联。</p>
+</li>
+<li><p>Reveal会扫描其网络中关联的应用程序，并让开发者选择连接其中之一，当连接到一个应用程序后，Reveal将显示其UI，其中包括大量的参数和设置。</p>
+</li>
+<li><p>开发人员现在可以检查UI或者更改设置，直到用户界面的外观和行为达到预期目标。目前它尚不支持布局约束，但根据Reveal的支持文档来看，这一功能将在未来的版本中发布。</p>
+</li>
+<li><p>Reveal可以和iOS模拟器一起使用，也可以用在运行在真机上的应用程序上。另外，Reveal的安装只需几分钟。</p>
+</li>
+<li><p>除了解析出UI参数外，Reveal也会通过一个分解的3D视图显示复杂的UI层次结构。开发者可以轻松的检查UI组件的分层，并在其层次结构中选择特定元素。为了进一步简化调试，也可以仅关注部分UI，而把其余部分屏蔽起来。</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/5b19e3489151.webp" alt="Reveal" loading='lazy'></p>
+<p>Reveal</p>
+<h4 id="8-ios-app-signer-ipa文件重签名"><a href="#8-ios-app-signer-ipa文件重签名" class="headerlink" title="8.ios-app-signer (ipa文件重签名)"></a>8.ios-app-signer (ipa文件重签名)</h4><p><img src="/tech-blog/assets/images/8e5635fdfa98.webp" alt="iOS App Signer" loading='lazy'></p>
+<p>iOS App Signer</p>
+<p>下载地址: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=http://dantheman827.github.io/ios-app-signer/">iOS App Signer</a></p>
+<p>这是一个适用于OS X的应用程序，它可以(重新)签名应用程序，并将它们绑定到ipa文件中，以便安装到iOS设备上。</p>
+<p>支持的输入类型有:ipa, deb, app, xcarchive</p>
+<p><img src="/tech-blog/assets/images/4a80c064eaf3.webp" alt="app签名" loading='lazy'></p>
+<p>app签名</p>
+<p>从图中就可以看出,对ipa重签名很简单的,为什么这么说呢?<br>ios-app-signer包含以下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Input File 导入ipa</span><br><span class="line">Signing Certificate 签名证书</span><br><span class="line">Provisinoing Profile:  Provisinoing Profile文件</span><br><span class="line">New Applicaitonn ID: 新应用的标识符</span><br><span class="line">App Display Name : 应用名</span><br><span class="line">App Version: 应用版本</span><br><span class="line">App Short Version: 发布版本</span><br></pre></td></tr></table></figure>
+
+<p>签名操作起来很简单,一键start操作,就可以进行应用签名.</p>
+<p><img src="/tech-blog/assets/images/f19f046c5de6.webp" alt="签名" loading='lazy'></p>
+<p>签名</p>
+<p>签名完成,导出ipa文件.</p>
+<p><img src="/tech-blog/assets/images/a0cdb064031a.webp" alt="image.png" loading='lazy'></p>
+<p>image.png</p>
+<p>我们可以进行安装到我们的设备了.</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本篇文章主要介绍了8款mac应用软件.<br>1.iFunBox<br>2.pp助手<br>3.爱思助手<br>4.iTools<br>5.抓包工具–Charles<br>6.Wireshark<br>7.Reveal<br>8.ios-app-signer<br>下一篇文章将继续介绍更多逆向工具。如果您对逆向感兴趣，请继续关注！</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e20d7142cab0">探秘工具:MacOS工具探索</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-iFunBox"><span class="toc-text">1. iFunBox</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-pp%E5%8A%A9%E6%89%8B"><span class="toc-text">2.pp助手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%88%B1%E6%80%9D%E5%8A%A9%E6%89%8B"><span class="toc-text">3.爱思助手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-iTools"><span class="toc-text">4.iTools</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E2%80%93Charles"><span class="toc-text">5.抓包工具–Charles</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-Wireshark-%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7"><span class="toc-text">6.Wireshark (抓包工具)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-Reveal-%E4%B8%80%E6%AC%BEMac%E4%B8%8B%E8%B0%83%E8%AF%95iOS%E5%BA%94%E7%94%A8%E7%9A%84%E8%BD%AF%E4%BB%B6"><span class="toc-text">7.Reveal (一款Mac下调试iOS应用的软件)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-ios-app-signer-ipa%E6%96%87%E4%BB%B6%E9%87%8D%E7%AD%BE%E5%90%8D"><span class="toc-text">8.ios-app-signer (ipa文件重签名)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">蓝色群山与晨光</title>
+  <desc id="desc">深蓝色夜空渐变为暖色晨光，层叠山峦沿画面下方延展。</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#09213f"/>
+      <stop offset=".48" stop-color="#244c76"/>
+      <stop offset=".82" stop-color="#7d9ab0"/>
+      <stop offset="1" stop-color="#ebbd99"/>
+    </linearGradient>
+    <radialGradient id="dawn" cx=".78" cy=".65" r=".6">
+      <stop offset="0" stop-color="#ffcf9d" stop-opacity=".72"/>
+      <stop offset=".32" stop-color="#d7ad98" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#7594b2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#6586a2"/>
+      <stop offset="1" stop-color="#52728f"/>
+    </linearGradient>
+    <linearGradient id="middle" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#345d81"/>
+      <stop offset="1" stop-color="#25486b"/>
+    </linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#173d60"/>
+      <stop offset="1" stop-color="#112d4b"/>
+    </linearGradient>
+    <linearGradient id="overlay" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#041529" stop-opacity=".22"/>
+      <stop offset=".46" stop-color="#061a30" stop-opacity=".19"/>
+      <stop offset="1" stop-color="#041529" stop-opacity=".32"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1600v900H0z"/>
+  <path fill="url(#dawn)" d="M0 0h1600v900H0z"/>
+  <g fill="#e9f2ff">
+    <circle cx="155" cy="148" r="1.6" opacity=".42"/>
+    <circle cx="376" cy="86" r="1.3" opacity=".36"/>
+    <circle cx="596" cy="188" r="1.5" opacity=".3"/>
+    <circle cx="826" cy="117" r="1.7" opacity=".4"/>
+    <circle cx="1068" cy="182" r="1.2" opacity=".28"/>
+    <circle cx="1331" cy="103" r="1.4" opacity=".36"/>
+    <circle cx="1458" cy="268" r="1.2" opacity=".2"/>
+    <circle cx="238" cy="296" r="1" opacity=".23"/>
+  </g>
+  <g fill="none" stroke="#d8e3ea" stroke-linecap="round" opacity=".09">
+    <path d="M1128 407h193" stroke-width="3"/>
+    <path d="M1192 421h244" stroke-width="2"/>
+    <path d="M139 462h225" stroke-width="2"/>
+  </g>
+  <circle cx="1250" cy="566" r="62" fill="#ffd3a3" opacity=".86"/>
+  <path fill="url(#far)" d="M0 644l90-43 64 19 102-87 58 43 108-65 82 83 70-21 81 55 107-94 71 54 94-120 76 93 73-27 67 63 83-77 87 61 72-32 69 90 81-20v326H0z"/>
+  <path fill="#b2c0c9" opacity=".24" d="m937 484 47 59-37-16-33 14-18 23zm-681 49 58 43-42-11-34 16zm481 1 29 26-30-9-31 18z"/>
+  <path fill="url(#middle)" d="M0 719l133-91 79 52 108-21 137 95 87-55 114 46 86-35 123 58 127-118 80 36 103-134 71 89 73-31 73 38 77-13 129 63v207H0z"/>
+  <path fill="#6c8ba5" opacity=".21" d="m1177 552 71 89-54-23-31 20-30-26z"/>
+  <path fill="url(#near)" d="M0 787c115-70 195-52 285-3 83 44 151 41 251 7 114-39 204-22 294 6 103 31 168 24 248-31l157-124 76 54 97-40 97 64 95-26v206H0z"/>
+  <path fill="#091f38" d="M0 872c165-48 252-36 389-7 141 30 244 1 367-24 128-27 188-10 313 9 136 20 237-45 354-75 76-20 121-16 177 0v125H0z"/>
+  <g fill="none" stroke="#527b9b" stroke-width="1.5" opacity=".16">
+    <path d="m1126 771 109-100 77 54 94-40 98 64 96-26"/>
+    <path d="m1151 792 88-76 73 46 95-43 91 62 102-21"/>
+    <path d="m1188 808 59-42 65 34 94-41 98 57 96-17"/>
+  </g>
+  <path fill="url(#overlay)" d="M0 0h1600v900H0z"/>
+</svg>

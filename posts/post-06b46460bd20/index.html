@@ -1,0 +1,379 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>循序渐进：MacOS工具探索 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章: 深入解读：探索Reveal调试工具的奥秘 这篇文章写完后，收到了群里小伙伴的积极反馈，其中一位私聊我说，通过阅读文章，对Reveal的操作有了更清晰的认识，尽管没有亲自动手操作，但通过文…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="循序渐进：MacOS工具探索">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-06b46460bd20/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章: 深入解读：探索Reveal调试工具的奥秘 这篇文章写完后，收到了群里小伙伴的积极反馈，其中一位私聊我说，通过阅读文章，对Reveal的操作有了更清晰的认识，尽管没有亲自动手操作，但通过文…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/282123e403fc.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/282123e403fc.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "循序渐进：MacOS工具探索",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-06b46460bd20/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/282123e403fc.webp",
+  "datePublished": "2019-12-25T09:19:05.000Z",
+  "dateModified": "2024-04-09T22:28:07.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-06b46460bd20/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '循序渐进：MacOS工具探索',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">循序渐进：MacOS工具探索</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">循序渐进：MacOS工具探索</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2019-12-25T09:19:05.000Z" title="发表于 2019-12-25 17:19:05">2019-12-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><ul>
+<li>上一篇文章: <a href="/tech-blog/posts/post-a13abd30cb51/">深入解读：探索Reveal调试工具的奥秘</a></li>
+</ul>
+<p>这篇文章写完后，收到了群里小伙伴的积极反馈，其中一位私聊我说，通过阅读文章，对Reveal的操作有了更清晰的认识，尽管没有亲自动手操作，但通过文章中的描述，他已经了解了如何使用。这让我感到非常欣慰，证明了逆向文章的价值所在。</p>
+<p>感谢这位朋友的反馈，也感谢大家的支持。接下来，我会继续更新更多的逆向文章，希望你能够喜欢，并且期待得到你的反馈和支持。如果有任何问题或建议，请随时留言给我，我会尽力改进和完善。</p>
+<ul>
+<li>本篇继续介绍逆向工具</li>
+</ul>
+<p><code>下面是我之前写得逆向工具文章</code></p>
+<ul>
+<li><a href="/tech-blog/posts/post-a2a8aa870614/">“切磋技艺：iOS逆向工具精选”</a></li>
+<li><a href="/tech-blog/posts/post-be03991987b9/">“技艺精进：iOS逆向工具精选”</a></li>
+</ul>
+<p><code>下面是我最近写得工具文章</code></p>
+<ul>
+<li><a href="/tech-blog/posts/post-5b71adcc6504/">“探秘工具:MacOS工具探索”</a></li>
+<li><a href="/tech-blog/posts/post-a13abd30cb51/">“深入解读：探索Reveal调试工具的奥秘”</a></li>
+</ul>
+<h4 id="1-MachOView"><a href="#1-MachOView" class="headerlink" title="1.MachOView"></a>1.MachOView</h4><p><img src="/tech-blog/assets/images/282123e403fc.webp" alt="MachOView" loading='lazy'></p>
+<p>MachOView</p>
+<ul>
+<li>MachOView下载地址 <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://sourceforge.net/projects/machoview/">地址</a></li>
+</ul>
+<p><img src="/tech-blog/assets/images/c3c4f317b3a9.webp" alt="MachOView下载地址" loading='lazy'></p>
+<p>MachOView下载地址</p>
+<p>最后的更新的版本:2019-07-27,已经是最新的了,我们开发中使用最新版本就可以了.</p>
+<ul>
+<li>MachOView源码地址 <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/gdbinit/MachOView">地址</a></li>
+</ul>
+<p><img src="/tech-blog/assets/images/969b98a75746.webp" alt="MachOView源码地址" loading='lazy'></p>
+<p>MachOView源码地址</p>
+<ul>
+<li><p>MachOView是一个可视化的Mach-O文件浏览器。它为探索和就地编辑Intel和ARM二进制文件提供了一个完整的解决方案。</p>
+</li>
+<li><p>Mach-O格式全称为Mach Object文件格式的缩写，是mac上可执行文件的格式.</p>
+</li>
+<li><p>Mach-O文件类型分为:<br>1、Executable：应用的主要二进制<br>2、Dylib Library：动态链接库（又称DSO或DLL）<br>3、Static Library：静态链接库<br>4、Bundle：不能被链接的Dylib，只能在运行时使用dlopen( )加载，可当做macOS的插件<br>5、Relocatable Object File ：可重定向文件类型</p>
+</li>
+<li><p>使用</p>
+</li>
+</ul>
+<p>在iDA中导出的可执行文件,依然可以用MachOView进行打开.</p>
+<p><img src="/tech-blog/assets/images/022c998d7773.webp" alt="文章配图" loading='lazy'></p>
+<p><code>注意</code><br>如图,Mach64 Header(64位架构),选中mach header 可以看到每个类的cpu架构信息、load commands数量 、load commandssize 、file type等信息</p>
+<ul>
+<li>64位和32位架构有哪些不同?</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">32位架构:</span><br><span class="line"></span><br><span class="line">struct mach_header &#123;</span><br><span class="line">    uint32_t    magic;      /* mach magic number identifier */</span><br><span class="line">    cpu_type_t  cputype;    /* cpu specifier */</span><br><span class="line">    cpu_subtype_t   cpusubtype; /* machine specifier */</span><br><span class="line">    uint32_t    filetype;   /* type of file */</span><br><span class="line">    uint32_t    ncmds;      /* number of load commands */</span><br><span class="line">    uint32_t    sizeofcmds; /* the size of all the load commands */</span><br><span class="line">    uint32_t    flags;      /* flags */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">64位架构:</span><br><span class="line"></span><br><span class="line">struct mach_header_64 &#123;</span><br><span class="line">    uint32_t    magic;      /* mach magic number identifier */</span><br><span class="line">    cpu_type_t  cputype;    /* cpu specifier */</span><br><span class="line">    cpu_subtype_t   cpusubtype; /* machine specifier */</span><br><span class="line">    uint32_t    filetype;   /* type of file */</span><br><span class="line">    uint32_t    ncmds;      /* number of load commands */</span><br><span class="line">    uint32_t    sizeofcmds; /* the size of all the load commands */</span><br><span class="line">    uint32_t    flags;      /* flags */</span><br><span class="line">    uint32_t    reserved;   /* reserved */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>32位和64位架构的头文件区别是64位多了一个保留字段(reserved)</li>
+<li>magic：魔数，用于快速确认该文件用于64位还是32位</li>
+<li>cputype：CPU类型，比如 arm</li>
+<li>cpusubtype：对应的具体类型，比如arm64、armv7</li>
+<li>filetype：文件类型，比如可执行文件、库文件、Dsym文件</li>
+</ul>
+<h4 id="2-IDA-Pro–汇编程序员的生命"><a href="#2-IDA-Pro–汇编程序员的生命" class="headerlink" title="2.IDA Pro–汇编程序员的生命"></a>2.IDA Pro–汇编程序员的生命</h4><p><img src="/tech-blog/assets/images/d881a79cb341.webp" alt="image.png" loading='lazy'></p>
+<p>image.png</p>
+<ul>
+<li><p>交互式反汇编器专业版（Interactive Disassembler Professional），人们常称其为IDA Pro，或简称为IDA。</p>
+</li>
+<li><p>目前最棒的一个静态反编译软件，为众多[0day]世界的成员和[ShellCode]安全分析人士不可缺少的利器！</p>
+</li>
+<li><p>IDA Pro是一款交互式的，可编程的，可扩展的，多处理器的，交叉[Windows]或[Linux] [WinCE] [MacOS]平台主机来分析程序， 被公认为最好的逆向工程利器。</p>
+</li>
+<li><p>只需要next进行安装,然后启动,就可以分析自己的汇编程序了.</p>
+</li>
+</ul>
+<h6 id="IDA-Pro如何使用呢"><a href="#IDA-Pro如何使用呢" class="headerlink" title="IDA Pro如何使用呢?"></a>IDA Pro如何使用呢?</h6><ul>
+<li>1.创建项目</li>
+</ul>
+<p><img src="/tech-blog/assets/images/fba690ccfc88.webp" alt="创建项目" loading='lazy'></p>
+<p>创建项目</p>
+<ul>
+<li>2.找到可执行文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/5b512851eb80.webp" alt="找到可执行文件" loading='lazy'></p>
+<p>找到可执行文件</p>
+<ul>
+<li>3.IDA打开可执行文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/c15405f730c0.webp" alt="IDA打开可执行文件" loading='lazy'></p>
+<p>IDA打开可执行文件</p>
+<ul>
+<li><p>4.找到main编译的汇编代码</p>
+<p><img src="/tech-blog/assets/images/1e1111118430.webp" alt="找到main编译的汇编代码" loading='lazy'></p>
+<p>找到main编译的汇编代码</p>
+</li>
+<li><p>5.分析汇编代码</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">; int __cdecl main(int argc, const char **argv, const char **envp)</span><br><span class="line">public _main</span><br><span class="line">_main proc near</span><br><span class="line">var_1C= dword ptr -1Ch</span><br><span class="line">var_18= dword ptr -18h</span><br><span class="line">var_14= dword ptr -14h</span><br><span class="line">var_10= qword ptr -10h</span><br><span class="line">var_4= dword ptr -4</span><br><span class="line"></span><br><span class="line">push    rbp</span><br><span class="line">mov     rbp, rsp</span><br><span class="line">sub     rsp, 20h</span><br><span class="line">lea     rax, cfstr_D    ; &quot;%d&quot;</span><br><span class="line">mov     [rbp+var_4], edi</span><br><span class="line">mov     [rbp+var_10], rsi</span><br><span class="line">mov     [rbp+var_14], 1</span><br><span class="line">mov     [rbp+var_18], 2</span><br><span class="line">mov     edi, [rbp+var_14]</span><br><span class="line">add     edi, [rbp+var_18]</span><br><span class="line">mov     [rbp+var_1C], edi</span><br><span class="line">mov     esi, [rbp+var_1C]</span><br><span class="line">mov     rdi, rax</span><br><span class="line">mov     al, 0</span><br><span class="line">call    _NSLog</span><br><span class="line">xor     eax, eax</span><br><span class="line">add     rsp, 20h</span><br><span class="line">pop     rbp</span><br><span class="line">retn</span><br><span class="line">_main endp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>6.通过对汇编代码进行分析,可以复原main方法中的代码</li>
+</ul>
+<p><img src="/tech-blog/assets/images/6dd8a7d3042d.webp" alt="分析" loading='lazy'></p>
+<p>分析</p>
+<h4 id="3-Hopper-Disassembler"><a href="#3-Hopper-Disassembler" class="headerlink" title="3.Hopper Disassembler"></a>3.Hopper Disassembler</h4><p><img src="/tech-blog/assets/images/331297fef57b.webp" alt="Hopper Disassembler" loading='lazy'></p>
+<p>Hopper Disassembler</p>
+<ul>
+<li><p><code>官网地址:</code><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://www.hopperapp.com/index.html">地址</a></p>
+</li>
+<li><p>Hopper 是一款帮助我们静态分析可执行文件的工具.<br>它可以将Mach-O文件的机器语言代码反编译成汇编代码,OC&#x2F;Swift伪代码<br>Hoppe可以让你进行反汇编、反编译和调试你的应用程序。</p>
+</li>
+<li><p>Hopper Disassembler结构</p>
+<p><img src="/tech-blog/assets/images/a11b69ce9d87.webp" alt="Hopper Disassembler结构" loading='lazy'></p>
+<p>Hopper Disassembler结构</p>
+</li>
+<li><p>第一次打开我们可以看到,Hopper Disassembler分几个模块.<br><code>1.定义所有符号列表及列表字符串,所看到的类名,方法名等</code><br><code>2.汇编语言</code><br><code>3.检查器,包含有关探索区域的上线信息</code><br><code>4.python命令工具</code><br><code>5.D,A,C,P,U 数据,ASCLL,代码,过程,定义</code><br><code>6.代码编译的几种模式</code></p>
+</li>
+<li><p>我们仍然使用上一篇文章中的项目TEST</p>
+</li>
+<li><p>我们打包项目,获取ipa包(这里不再详细描述打包的过程)</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/6f455528fbd8.webp" alt="TEST" loading='lazy'></p>
+<p>TEST</p>
+<ul>
+<li>我们点击TEST,可以看到TEST的Unix可执行文件,这就是我们需要的文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/a450c9455d3c.webp" alt="TEST-Unix" loading='lazy'></p>
+<p>TEST-Unix</p>
+<ul>
+<li><p>我们拷贝TEST到桌面</p>
+</li>
+<li><p>接着,我们打开Hopper Disassembler</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/119b27a22e02.webp" alt="打开Hopper" loading='lazy'></p>
+<p>打开Hopper</p>
+<ul>
+<li>Open TEST-Unix文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/39d8e707af36.webp" alt="Open TEST-Unix" loading='lazy'></p>
+<p>Open TEST-Unix</p>
+<ul>
+<li><p>点击OK,可以看到项目的结构</p>
+<p><img src="/tech-blog/assets/images/9bd0b97ca1ee.webp" alt="项目结构" loading='lazy'></p>
+<p>项目结构</p>
+</li>
+<li><p>我们对照源码看一下,我把源码粘贴到这里</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#import &quot;ViewController.h&quot;</span><br><span class="line"></span><br><span class="line">@interface ViewController ()</span><br><span class="line"></span><br><span class="line">@property (nonatomic,strong)UIButton *revealBtn;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation ViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    // Do any additional setup after loading the view.</span><br><span class="line">    </span><br><span class="line">    [self.view addSubview:self.revealBtn];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-(UIButton*)revealBtn&#123;</span><br><span class="line">    if (!_revealBtn) &#123;</span><br><span class="line">        _revealBtn = [UIButton buttonWithType:UIButtonTypeCustom];</span><br><span class="line">        _revealBtn.frame = CGRectMake(100,100, 100,40);</span><br><span class="line">        _revealBtn.backgroundColor = [UIColor redColor];</span><br><span class="line">        [_revealBtn setTitle:@&quot;测试&quot; forState:UIControlStateNormal];</span><br><span class="line">        [_revealBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];</span><br><span class="line">    &#125;</span><br><span class="line">    return _revealBtn;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们看一下创建revealBtn按钮反编译后的源码</li>
+</ul>
+<p><img src="/tech-blog/assets/images/66b0339e51a6.webp" alt="revealBtn反编译" loading='lazy'></p>
+<p>revealBtn反编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">nop</span><br><span class="line">ldr        x0, #0x100008d78</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d38 ; @selector(buttonWithType:)</span><br><span class="line">movz       x2, #0x0</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">mov        x29, x29</span><br><span class="line">bl         imp___stubs__objc_retainAutoreleasedReturnValue</span><br><span class="line">ldr        x8, x19, x22</span><br><span class="line">str        x0, x19, x22</span><br><span class="line">mov        x0, x8</span><br><span class="line">bl         imp___stubs__objc_release</span><br><span class="line">ldr        x0, x19, x22</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d40 ; @selector(setFrame:)</span><br><span class="line">nop</span><br><span class="line">ldr        d0, #0x100006b68</span><br><span class="line">nop</span><br><span class="line">ldr        d3, #0x100006b70</span><br><span class="line">mov        v1, v0</span><br><span class="line">mov        v2, v0</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">adrp       x21, #0x100008000</span><br><span class="line">ldr        x0, [x21, #0xd80] ; objc_cls_ref_UIColor,_OBJC_CLASS_$_UIColor</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d48 ; @selector(redColor)</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">mov        x29, x29</span><br><span class="line">bl         imp___stubs__objc_retainAutoreleasedReturnValue</span><br><span class="line">mov        x20, x0</span><br><span class="line">ldr        x0, x19, x22</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d50 ; @selector(setBackgroundColor:)</span><br><span class="line">mov        x2, x20</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">mov        x0, x20</span><br><span class="line">bl         imp___stubs__objc_release</span><br><span class="line">ldr        x0, x19, x22</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d58 ; @selector(setTitle:forState:)</span><br><span class="line">adr        x2, #0x100008060</span><br><span class="line">nop</span><br><span class="line">movz       x3, #0x0</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">ldr        x20, x19, x22</span><br><span class="line">ldr        x0, [x21, #0xd80] ; objc_cls_ref_UIColor,_OBJC_CLASS_$_UIColor</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d60 ; @selector(whiteColor)</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">mov        x29, x29</span><br><span class="line">bl         imp___stubs__objc_retainAutoreleasedReturnValue</span><br><span class="line">mov        x21, x0</span><br><span class="line">nop</span><br><span class="line">ldr        x1, #0x100008d68 ; @selector(setTitleColor:forState:)</span><br><span class="line">mov        x0, x20</span><br><span class="line">mov        x2, x21</span><br><span class="line">movz       x3, #0x0</span><br><span class="line">bl         imp___stubs__objc_msgSend</span><br><span class="line">mov        x0, x21</span><br><span class="line">bl         imp___stubs__objc_release</span><br><span class="line">ldr        x0, x19, x22</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>下面看一下对比</li>
+</ul>
+<p><img src="/tech-blog/assets/images/a9029d724613.webp" alt="源码对比" loading='lazy'></p>
+<p>源码对比</p>
+<p>我们通过观察,创建按钮的代码我们都可以猜到.当然这是很简单的Demo,复杂一些我们就要通过汇编代码及伪代码进行静态分析.</p>
+<ul>
+<li><p><code>记得</code> 在我的iOS逆向系列的第二篇文章中，我分享了我的逆向经历。在逆向过程中，我们不需要完全翻译应用的代码，因为这样会耗费大量的时间。相反，通过分析汇编代码，我们可以猜测应用的实现逻辑，从而了解其功能实现的原理。因此，我们不必要花费过多的时间和精力在这方面。</p>
+</li>
+<li><p>Hopper的其他功能你可以自己尝试操作一下,可以帮助到你逆向分析.</p>
+</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本篇文章主要介绍MacOS上安装的应用:</p>
+<ul>
+<li>MachOView</li>
+<li>IDA Pro</li>
+<li>Hopper Disassembler</li>
+</ul>
+<p>这些应用都会对你的逆向分析有辅助作用.</p>
+<p>下一篇文章我们将要介绍iOS的逆向工具及调试工具.</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/953671423226">循序渐进：MacOS工具探索</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-MachOView"><span class="toc-text">1.MachOView</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-IDA-Pro%E2%80%93%E6%B1%87%E7%BC%96%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E7%94%9F%E5%91%BD"><span class="toc-text">2.IDA Pro–汇编程序员的生命</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#IDA-Pro%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%91%A2"><span class="toc-text">IDA Pro如何使用呢?</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Hopper-Disassembler"><span class="toc-text">3.Hopper Disassembler</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

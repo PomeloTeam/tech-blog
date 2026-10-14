@@ -1,0 +1,293 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>魔法宝盒: Cydia软件的奇妙世界 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章: &quot;心手相应: 探索Cycript的潜力&quot; 本篇文章对Cydia进行介绍 1.Cydia Cydia之父-Jay Freeman(杰 弗里曼) Cydia之父 Jay Freeman，曾经…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="魔法宝盒: Cydia软件的奇妙世界">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-47baebc03f50/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章: &quot;心手相应: 探索Cycript的潜力&quot; 本篇文章对Cydia进行介绍 1.Cydia Cydia之父-Jay Freeman(杰 弗里曼) Cydia之父 Jay Freeman，曾经…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/168e29a865fb.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/168e29a865fb.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "魔法宝盒: Cydia软件的奇妙世界",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-47baebc03f50/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/168e29a865fb.webp",
+  "datePublished": "2019-12-29T09:06:42.000Z",
+  "dateModified": "2024-04-27T10:30:24.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-47baebc03f50/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '魔法宝盒: Cydia软件的奇妙世界',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">魔法宝盒: Cydia软件的奇妙世界</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">魔法宝盒: Cydia软件的奇妙世界</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2019-12-29T09:06:42.000Z" title="发表于 2019-12-29 17:06:42">2019-12-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>上一篇文章: <a href="/tech-blog/posts/post-29e2beddfe61/">“心手相应: 探索Cycript的潜力”</a></p>
+<p>本篇文章对Cydia进行介绍</p>
+<p><img src="/tech-blog/assets/images/168e29a865fb.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="1-Cydia"><a href="#1-Cydia" class="headerlink" title="1.Cydia"></a>1.Cydia</h4><ul>
+<li>Cydia之父-Jay Freeman(杰 弗里曼)</li>
+</ul>
+<p>Cydia之父 Jay Freeman，曾经也是一名iOS开发工程师。由于他写了一个视频拍摄软件而苹果没允许上架，他一气之下就开了cydia软件商店，专门收留不被苹果通过的软件。</p>
+<ul>
+<li>Cydia有五部分组成</li>
+</ul>
+<p><code>1.cydia</code>  </p>
+<p><img src="/tech-blog/assets/images/3d3a5bae0e2e.webp" alt="cydia" loading='lazy'></p>
+<p>cydia</p>
+<p><code>2.软件源</code></p>
+<p>.</p>
+<p><img src="/tech-blog/assets/images/6cc137cdf4ab.webp" alt="IMG\_0280.PNG" loading='lazy'></p>
+<p>IMG_0280.PNG</p>
+<p><code>3.变更</code></p>
+<p><img src="/tech-blog/assets/images/86e2362f31b8.webp" alt="变更" loading='lazy'></p>
+<p>变更</p>
+<p><code>4.已安装</code>  </p>
+<p><img src="/tech-blog/assets/images/e7a3a1c80d11.webp" alt="已安装" loading='lazy'></p>
+<p>已安装</p>
+<p><code>5.搜索</code>  </p>
+<p><img src="/tech-blog/assets/images/c35f86e16e2e.webp" alt="搜索" loading='lazy'></p>
+<p>搜索</p>
+<p>五个部分组成</p>
+<ul>
+<li>cydia:<br>主要是升级越狱常见问题,设备文件拷贝,OpenSSH访问教程,Root密码教程,存储详情等</li>
+<li>软件源:<br>主要是某些插件,需要到指定的软件源下载</li>
+<li>变更:<br>插件安装更新等变动更新</li>
+<li>已安装:<br>已经安装的插件,辅助工具</li>
+<li>搜索<br>搜索需要安装的插件或者工具</li>
+</ul>
+<h4 id="2-继续更新Cydia工具文章"><a href="#2-继续更新Cydia工具文章" class="headerlink" title="2.继续更新Cydia工具文章"></a>2.继续更新Cydia工具文章</h4><p>今天试2019年的最后一天了,明天就是2020年.</p>
+<p>我们满怀欣喜引接2020,2019的不快乐,希望停留在2019,2019的快乐希望带进2020,也希望大家2020年快乐健康.</p>
+<p>今天刚写了这篇文章: <a href="/tech-blog/posts/post-b0cd312c145a/">“金蛋破壳：iOS应用砸壳工具解密”</a>.</p>
+<p>有的朋友可能会觉得文章有些跳跃，其实并非如此。有些内容可能需要提前提到，我会尽量在有时间的情况下对文章进行更新。</p>
+<p>在写每一篇文章时，我都会亲自操作一遍。因为Mac系统升级后，之前调试的工具可能会有变化，我会提前安装并测试工具的使用情况。如果遇到错误或者总结性的内容，我会用“注意”作为标记，以便大家注意。</p>
+<p>我亲自测试之后，会按照安装到使用的步骤，一步一步截图介绍给大家。如果按照我的步骤安装，应该会很顺利。但也存在一些别的原因导致安装不成功。如果你遇到了问题，请首先自己搜索解决办法，尝试多次。如果仍然无法解决，你可以联系我，我们一起来解决。</p>
+<p>有时候问题可能是系统配置或者环境出了问题，但不用担心，总会有解决的办法。</p>
+<h4 id="3-Cydia模块介绍"><a href="#3-Cydia模块介绍" class="headerlink" title="3.Cydia模块介绍"></a>3.Cydia模块介绍</h4><p><img src="/tech-blog/assets/images/e9f91c5738e5.webp" alt="cydia" loading='lazy'></p>
+<p>cydia</p>
+<p>我们主要对Cydia模块的OpenSSH访问教程&#x2F;Root密码教程介绍.</p>
+<p><code>1.</code>Root密码教程</p>
+<p><img src="/tech-blog/assets/images/6e7f52a948db.webp" alt="Root密码教程 1" loading='lazy'></p>
+<p>Root密码教程 1</p>
+<p><img src="/tech-blog/assets/images/83675d3fc866.webp" alt="Root密码教程 2" loading='lazy'></p>
+<p>Root密码教程 2</p>
+<p><img src="/tech-blog/assets/images/a268139dab1e.webp" alt="Root密码教程 3" loading='lazy'></p>
+<p>Root密码教程 3</p>
+<p><code>If you install OpenSSH, you need to change your device&#39;s root password to prevent the possibility of unsavory people remotely logging into your device using the default password.</code><br><code>Open Terminal on your desktop and log in over wifi</code><br><code>1: Obtain Administrator Access</code><br><code>Note: this first step is only necessary if you are using MobileTerminal. If you logged in via SSH as root, you do not need to do this step, so skip to Step 2.</code><br><code>Run &quot;su root&quot; and provide the root password. The default password as provided by Apple is &quot;alpine&quot;.</code><br><code>Here I also run &quot;cd&quot; only to shorten the otherwise very long prompt.</code><br><code>iPhone:~ mobile$ su root Password: iPhone:/var/mobile root# cd iPhone:~ root#</code></p>
+<p><code>2: Change the root Password</code><br><code>Run &quot;passwd&quot; and type in your new password twice. Please note that your keypresses will not be displayed on the terminal screen (for security).</code><br><code>iPhone:~ root# passwd Changing password for root. New password: Retype new password: iPhone:~ root#</code></p>
+<p><code>3: Change the mobile Password</code><br><code>This is the regular user account on the device. Run &quot;passwd mobile&quot; and repeat as directed above.</code><br><code>iPhone:~ root# passwd mobile Changing password for mobile. New password: Retype new password: iPhone:~ root#</code></p>
+<p><code>4: Close your terminal Congratulations! Your job is done!</code></p>
+<p><code>大概意思:</code></p>
+<p>如果你安装OpenSSH,你如果需要改变设备的root密码 ,防止别人通过默认密码远程登录你的设备.<code>稍等这里讲解OpenSSH</code></p>
+<p><code>如果需要修改密码</code><br><code>1.</code> 使用root账户登录，输入密码。<br><code>2.</code> 在终端中输入passwd命令，系统会提示你输入两次新密码，确认即可成功修改密码。<br><code>3.</code> 如果需要切换到其他用户（比如mobile用户），可以通过执行passwd mobile命令，同样输入两次新密码，确认即可成功修改密码。</p>
+<p><code>OpenSSH</code></p>
+<p><img src="/tech-blog/assets/images/63c96839871a.webp" alt="OpenSSH 1" loading='lazy'></p>
+<p>OpenSSH 1</p>
+<p><img src="/tech-blog/assets/images/a16450268812.webp" alt="OpenSSH 2" loading='lazy'></p>
+<p>OpenSSH 2</p>
+<p><code>Connecting to the iPhone remotely lets you use the full power of your device. It&#39;s really quite simple with the packages in Telesphoreo, so I&#39;ve written up this guide. Good luck!</code><br><code>1: install the OpenSSH package</code><br><code>(click, Install, Confirm, Close, Back)</code><br><code>2: open Wi-Fi from Settings</code><br><code>3: click your network&#39;s</code><br><code>4: read the &quot;IP Address&quot; field</code><br><code>(example: [192.168.1.100](192.168.1.100))</code><br><code>5: open Terminal on desktop</code><br><code>(open Spotlight, search for &quot;Terminal&quot;)</code><br><code>Or if you&#39;re on Windows, you can use a desktop terminal application such as PuTTY([http://www.putty.org/](http://www.putty.org/)).</code><br><code>6: run &quot;ssh root@[insert IP Address]&quot;</code><br><code>(example: ssh root@[192.168.1.100](192.168.1.100))</code><br><code>7: wait a few minutes (just once)</code><br><code>(it&#39;s generating some crypto keys)</code><br><code>8: accept new computer host key</code><br><code>(if it doesn&#39;t ask you, that&#39;s fine)</code><br><code>9: log in with password &quot;alpine&quot;</code><br><code>(you should change this now)</code></p>
+<p><code>大概意思:</code><br>通过OpenSSH如何连接手机.</p>
+<p><code>1.</code> 安装OpenSSH包<br><code>2.</code> 打开wifi设置<br><code>3.</code> 获取本机的IP地址<br><code>4.</code> 在终端中输入ssh root@IP地址。<br><code>5.</code> 等待片刻，然后输入密码（默认密码为alpine）。<br><code>6.</code> 这样就可以成功连接到手机了。</p>
+<h4 id="4-软件源"><a href="#4-软件源" class="headerlink" title="4.软件源"></a>4.软件源</h4><p><img src="/tech-blog/assets/images/6fc57bf37d74.webp" alt="软件源" loading='lazy'></p>
+<p>软件源</p>
+<p>如果你需要安装一些插件或者软件,需要加入软件源,才能搜索到逆向下载的软件.</p>
+<p><code>推荐几个软件源</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1.Cydia贴吧源</span><br><span class="line">apt.cydiaba.cn</span><br><span class="line"></span><br><span class="line">2.HackCN源</span><br><span class="line">crak.cn/repo</span><br><span class="line"></span><br><span class="line">4.威锋源</span><br><span class="line">apt.so</span><br><span class="line"></span><br><span class="line">5.威锋精品技术源</span><br><span class="line">repo.feng.com</span><br><span class="line"></span><br><span class="line">6.PP助手源</span><br><span class="line">apt.25pp.com </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="5-变更-已安装-搜索模块"><a href="#5-变更-已安装-搜索模块" class="headerlink" title="5.变更,已安装,搜索模块"></a>5.变更,已安装,搜索模块</h4><ul>
+<li><p>变更模块是最近变更了哪些内容,可以通过列表可以查看到</p>
+</li>
+<li><p>已安装,主要是一些安装的软件</p>
+</li>
+<li><p>搜索,通过添加软件源,可以下载插件&#x2F;软件.</p>
+</li>
+</ul>
+<h4 id="6-总结"><a href="#6-总结" class="headerlink" title="6.总结"></a>6.总结</h4><ul>
+<li><p>通过Cydia目录，你对Cydia项目结构应该有了清楚的了解。</p>
+</li>
+<li><p>对几个模块的作用，想必你也已经了解。</p>
+</li>
+</ul>
+<p><code>注意</code><br>在安装插件时，如果设备进入安全模式，请删除Cydia中的插件，以保护Cydia的稳定性。我以前曾遇到过这些问题，没有保护好Cydia，导致Cydia无法正常打开。一旦Cydia无法打开，我们安装的软件，包括OpenSSH等，也将无法使用。手机无法连接到设备，我们就无法操作越狱系统。</p>
+<p><code>我有篇文章提到了如何修复Cydia</code><br>cydia修复: <a href="/tech-blog/posts/post-2d3590a1e711/">“披荆斩棘：越狱设备Cydia报错的优雅解决”</a></p>
+<p>下一篇文章我们将继续了解Cydia，将对Cydia软件进行介绍。</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/88b2c7c6584f">魔法宝盒: Cydia软件的奇妙世界</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Cydia"><span class="toc-text">1.Cydia</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%BB%A7%E7%BB%AD%E6%9B%B4%E6%96%B0Cydia%E5%B7%A5%E5%85%B7%E6%96%87%E7%AB%A0"><span class="toc-text">2.继续更新Cydia工具文章</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Cydia%E6%A8%A1%E5%9D%97%E4%BB%8B%E7%BB%8D"><span class="toc-text">3.Cydia模块介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="toc-text">4.软件源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%8F%98%E6%9B%B4-%E5%B7%B2%E5%AE%89%E8%A3%85-%E6%90%9C%E7%B4%A2%E6%A8%A1%E5%9D%97"><span class="toc-text">5.变更,已安装,搜索模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E6%80%BB%E7%BB%93"><span class="toc-text">6.总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

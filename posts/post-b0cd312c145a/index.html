@@ -1,0 +1,467 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>金蛋破壳：iOS应用砸壳工具解密 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章地址: 渐入佳境: 解密class-dump的奥秘 今天是2019年12月31号,2019年最后一天了,祝大家2020跨年快乐. 明天就是2020年1月1日了,同样祝大家元旦快乐! App应…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="金蛋破壳：iOS应用砸壳工具解密">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-b0cd312c145a/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章地址: 渐入佳境: 解密class-dump的奥秘 今天是2019年12月31号,2019年最后一天了,祝大家2020跨年快乐. 明天就是2020年1月1日了,同样祝大家元旦快乐! App应…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/325587db2141.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/325587db2141.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "金蛋破壳：iOS应用砸壳工具解密",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-b0cd312c145a/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/325587db2141.webp",
+  "datePublished": "2019-12-31T07:01:08.000Z",
+  "dateModified": "2024-04-10T22:29:28.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-b0cd312c145a/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '金蛋破壳：iOS应用砸壳工具解密',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">金蛋破壳：iOS应用砸壳工具解密</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">金蛋破壳：iOS应用砸壳工具解密</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2019-12-31T07:01:08.000Z" title="发表于 2019-12-31 15:01:08">2019-12-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>上一篇文章地址: <a href="/tech-blog/posts/post-3b6fede73e64/">渐入佳境: 解密class-dump的奥秘</a></p>
+<p>今天是2019年12月31号,2019年最后一天了,祝大家2020跨年快乐.</p>
+<p>明天就是2020年1月1日了,同样祝大家元旦快乐!</p>
+<p><img src="/tech-blog/assets/images/325587db2141.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li><p>App应用上传到AppStore后，苹果会对咱们的应用进行加密。我们的可执行文件加了一层保护壳，就比如上节中，我们使用class-dump进行dump类的头文件。</p>
+</li>
+<li><p>我们通过打包自己的应用，这个应用未上架AppStore，相当于从未加密的问题，直接使用class-dump就可以进行dump。</p>
+</li>
+<li><p>当我们从AppStore下载之后，我们需要把这个壳子去掉，也就是我们本篇提到的砸壳，砸了壳子才能获取到里面的果实。</p>
+</li>
+</ul>
+<p>我之前写的文章: <a href="/tech-blog/posts/post-be03991987b9/">“技艺精进：iOS逆向工具精选”</a> 介绍了dumpdecrypted的砸壳,本篇文章也会介绍它.</p>
+<h4 id="1-dumpdecrypted"><a href="#1-dumpdecrypted" class="headerlink" title="1. dumpdecrypted"></a>1. dumpdecrypted</h4><ul>
+<li><p>dumpdecrypted的产生<br>由于AppStore下载的App是被苹果加密过的,可执行文件被套上一层保护壳<br>class-dump无法作用于加密过的App<br>想要获取头文件,需要先解密App的可执行文件,也叫砸壳<br>dumpdecrypted就是由越狱社区的知名人士 Stefan Esser 出品的一款砸壳工具,被越狱社区广泛运用在iOS逆向工程研究中.</p>
+</li>
+<li><p>dumpdecrypted下载<br>github地址: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/stefanesser/dumpdecrypted">dumpdecrypted</a></p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/1cb6bc792432.webp" alt="dumpdecrypted" loading='lazy'></p>
+<p>dumpdecrypted</p>
+<ul>
+<li><p>你可以通过git clone ,也可以直接下载,下载过程不再详细介绍.</p>
+</li>
+<li><p>我已经下载好了,我们看下文件内容</p>
+<p><img src="/tech-blog/assets/images/1387b8e97fe3.webp" alt="dumpdecrypted 文件" loading='lazy'></p>
+<p>dumpdecrypted 文件</p>
+</li>
+<li><p>我们对它进行编译,终端执行make命令</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/8616d877dd63.webp" alt="make 编译" loading='lazy'></p>
+<p>make 编译</p>
+<ul>
+<li>我们看下编译后的生成了什么文件?</li>
+</ul>
+<p><img src="/tech-blog/assets/images/98d3f562305d.webp" alt="7747CD0B-86E8-4888-9567-912C72D44F3E.png" loading='lazy'></p>
+<p>7747CD0B-86E8-4888-9567-912C72D44F3E.png</p>
+<ul>
+<li><code>我们看到生成了dumpdeycrypted.dylib</code></li>
+</ul>
+<p><code>注意</code></p>
+<p><img src="/tech-blog/assets/images/e05cf5e9c557.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>找到要砸壳的APP的Documents目录路径(某应用为例)</li>
+</ul>
+<p><img src="/tech-blog/assets/images/ebbd2a377a82.webp" alt="文章配图" loading='lazy'></p>
+<p>估计你看到这些,就会很头疼了,到底哪个是呢?</p>
+<ul>
+<li><p>我们借助强大的Cycript,让App告诉我们它在哪里,直接找到它的的根目录</p>
+<p><img src="/tech-blog/assets/images/9ab856e82f07.webp" alt="文章配图" loading='lazy'></p>
+</li>
+<li><p>锁定该目录 065B70ED-FCD1-4874-B4A3-86F1B765945F</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/1ebce4838885.webp" alt="2960658-4d3bbc74c665ca04.png" loading='lazy'></p>
+<p>2960658-4d3bbc74c665ca04.png</p>
+<ul>
+<li>将dumpdecrypted.dylib拷贝到Documents目录下.<br>有两种方式拷贝:<br>第一种:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /Users/popo/Desktop/dump/dumpdecrypted/dumpdecrypted.dyli root@192.168.3.15:var/mobile/Containers/Data/Application/065B70ED-FCD1-4874-B4A3-86F1B765945F/Documents/dumpdecrypted.dylib</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/616622f2e798.webp" alt="文章配图" loading='lazy'></p>
+<p>第二种:</p>
+<p><img src="/tech-blog/assets/images/e5272c0a77a3.webp" alt="文章配图" loading='lazy'></p>
+<p>以上两种方式,只需要拷贝成功就行,选择那种,根据个人喜好.</p>
+<ul>
+<li>开始砸壳</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/containers/Bundle/Application/9AF4167F-D4AA-4DBB-A67D-A956CCDBDEF9/WeChat.app/WeChat mach-o decryption dumper</span><br></pre></td></tr></table></figure>
+
+<p><img src="/tech-blog/assets/images/5f2a7093f961.webp" alt="文章配图" loading='lazy'></p>
+<p>砸壳失败了,分析一下原因:<br><code>required code signature missing for &#39;dumpdecrypted.dylib</code><br>由于没有对dumpdecrypted.dylib签名,导致我们没有砸壳成功.</p>
+<ul>
+<li>解决问题是对dumpdecrypted.dylib文件签名,首先获取可签名的证书</li>
+</ul>
+<p><img src="/tech-blog/assets/images/f323d1eb01b9.webp" alt="文章配图" loading='lazy'></p>
+<ul>
+<li>然后为dumpecrypted.dylib签名</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign --force --verify --verbose --sign &quot;iPhone Developer: `(开发这信息)`&quot; dumpdecrypted.dylib </span><br></pre></td></tr></table></figure>
+
+<p><code>然后在上传到手机</code></p>
+<ul>
+<li>进行第二次砸壳</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/containers/Bundle/Application/9AF4167F-D4AA-4DBB-A67D-A956CCDBDEF9/WeChat.app/WeChat mach-o decryption dumper</span><br></pre></td></tr></table></figure>
+
+<p><code>在当前目录下会生成WeChat.decrypted文件</code></p>
+<p>砸壳完成,然后你就可以拿着砸壳文件就行class-dump,静态分析汇编代码了.</p>
+<p><code>问题</code>:dumpdecrypted为什么拷贝到Documents目录下操作?</p>
+<p><code>AppStore对沙盒以外的绝大数目录没有写权限. Documents目录下使用dumpdecrypted.dylib时,保证它能在当前目录下写一个decrypted文件.</code></p>
+<h4 id="2-Clutch"><a href="#2-Clutch" class="headerlink" title="2.Clutch"></a>2.Clutch</h4><p><code>除了dumpdecrypted,我们还可以通过Clutch来解密.</code></p>
+<ul>
+<li><p>Clutch砸壳的原理?<br>Clutch是生成一个新的进程,然后暂停进程并dump内存.</p>
+</li>
+<li><p>我们下载Clutch并编译</p>
+</li>
+</ul>
+<p><img src="/tech-blog/assets/images/c07929768ee4.webp" alt="Clutch" loading='lazy'></p>
+<p>Clutch</p>
+<ul>
+<li>我们下载看下源码文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/334c21e413a5.webp" alt="Clutch编译源码" loading='lazy'></p>
+<p>Clutch编译源码</p>
+<ul>
+<li>我们选择真机,选择证书对源码进行编译,生成可执行文件</li>
+</ul>
+<p><img src="/tech-blog/assets/images/d57825078e05.webp" alt="Clutch 可执行文件" loading='lazy'></p>
+<p>Clutch 可执行文件</p>
+<ul>
+<li>我们将编译的Clutch可执行文件拷贝到桌面,备用.</li>
+</ul>
+<p><img src="/tech-blog/assets/images/64d3a9097f45.webp" alt="编译后的Clutch" loading='lazy'></p>
+<p>编译后的Clutch</p>
+<ul>
+<li>我们可以通过两种方式进行拷贝</li>
+</ul>
+<p><code>1</code> 通过iFunBox拷贝目录&#x2F;usr&#x2F;bin目录下</p>
+<p><img src="/tech-blog/assets/images/3c1d28ee29b5.webp" alt="2960658-6322cba4ef28e53a.png" loading='lazy'></p>
+<p>2960658-6322cba4ef28e53a.png</p>
+<p><code>2</code> 通过SCP拷贝</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp Clutch/clutch root@设备ip:/usr/bin/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们看下Clutch的参数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Clutch [OPTIONS]</span><br><span class="line">-b --binary-dump     Only dump binary files from specified bundleID</span><br><span class="line">-d --dump            Dump specified bundleID into .ipa file</span><br><span class="line">-i --print-installed Print installed application</span><br><span class="line">--clean              Clean /var/tmp/clutch directory</span><br><span class="line">--version            Display version and exit</span><br><span class="line">-? --help            Display this help and exit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>经过对参数的翻译:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1.clutch -b 砸壳后的文件是二进制文件</span><br><span class="line"></span><br><span class="line">2.clutch -d 砸壳后的文件是ipa文件</span><br><span class="line"></span><br><span class="line">3.clutch -i 查看安装的应用</span><br><span class="line"></span><br><span class="line">4.clutch --clean /var/tmp/clutch 目录清理</span><br><span class="line"></span><br><span class="line">5.clutch --version 显示版本并退出</span><br><span class="line"></span><br><span class="line">6.clutch -? --help 显示帮助并退出</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们通过ssh协议通过终端连接越狱机</li>
+</ul>
+<p><img src="/tech-blog/assets/images/b76d848bd543.webp" alt="文章配图" loading='lazy'></p>
+<p><code>1.上图:我们可以看到通过执行 sh sshLogin.sh,我们不需要输入密码直接可以连接到越狱机,同事执行clutch -i 命令</code><br><code>2.从终端显示,执行的clutch -i 并没有执行成功</code><br><code>3.权限不够,加权来凑.我们需要对/usr/bin目录下的clutch进行加权</code><br><code>4.加权,你可以chmod 777 /user/bin/clutch</code><br><code>5.同样加权,你也可以通过chmod +x /user/bin/clutch</code><br><code>6. (1)中提交的sh 执行脚本,我会在文章</code><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/577f038902e4">iOS逆向工具之Cydia(iOS)介绍</a><code>中介绍如何使用</code></p>
+<ul>
+<li>再次执行clutch -i 验证是否授权成功</li>
+</ul>
+<p><img src="/tech-blog/assets/images/30936f6a9cf9.webp" alt="clutch 授权成功" loading='lazy'></p>
+<p>clutch 授权成功</p>
+<ul>
+<li><p>我们进行砸壳</p>
+<p><img src="/tech-blog/assets/images/75885d249cfa.webp" alt="砸壳准备" loading='lazy'></p>
+<p>砸壳准备</p>
+</li>
+</ul>
+<p><code>1.我们可以看到应用的再越狱中运行的序列号为1</code><br><code>2.我们还可以看到应用的bundle id</code></p>
+<ul>
+<li>我们砸壳可以通过两种方式进行</li>
+</ul>
+<p><code>1.通过执行命令 clutch -d app序列号</code><br><code>2.通过执行命令 clutch -d app包名</code></p>
+<ul>
+<li>砸壳成功后,我们可以看到提示信息</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Zipping WeChat.app</span><br><span class="line"># Swapping architectures..</span><br><span class="line"># DONE: /private/var/mobile/Documents/Dumped/hk.itools.appe-iOS7.0-(Clutch-2.0.4).ipa</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们可以看到砸壳生成ipa目录</li>
+</ul>
+<p><img src="/tech-blog/assets/images/9b3fe6b11ff3.webp" alt="ipa目录" loading='lazy'></p>
+<p>ipa目录</p>
+<ul>
+<li>有了目录地址,我们通过iFunBox或者scp 拷贝到Mac,等待分析应用.</li>
+</ul>
+<p><code>这就是Clutch砸壳,很容易使用</code></p>
+<p><code>注意</code><br>虽然我们介绍了两款砸壳工具,并不代表,你想砸壳的应用,使用上面两种方式都很顺利.我曾经尝试砸壳某应用,使用两种方式,我并没有砸壳成功.</p>
+<p><code>分析</code><br>1.有可能这款应用做了防护<br>2.我们的砸壳应用已经不使用某应用了,砸壳方式需要改变</p>
+<p><code>我们接下来继续介绍第三方砸壳方式</code></p>
+<h4 id="3-frida-ios-dump-一条命令完成iOS应用砸壳"><a href="#3-frida-ios-dump-一条命令完成iOS应用砸壳" class="headerlink" title="3.frida-ios-dump 一条命令完成iOS应用砸壳"></a>3.frida-ios-dump 一条命令完成iOS应用砸壳</h4><p><img src="/tech-blog/assets/images/5cf96b025ae0.webp" alt="frida" loading='lazy'></p>
+<p>frida</p>
+<p><code>Dynamic instrumentation toolkit for developers, reverse-engineers, and security researchers.</code><br><code>面向开发人员、逆向工程师和安全研究人员的动态工具工具包。</code></p>
+<ul>
+<li><p><code>Frida地址</code>: <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=%255Bhttps://frida.re/%255D(https://frida.re/)">Frida</a></p>
+</li>
+<li><p>Frida的使用场景<br><code>1.</code> hook特定函数并更改返回值<br><code>2.</code> 分析特定协议,同时其动态嗅探,解密<br><code>3.</code> 应用调试<br><code>4.</code> 在iOS应用上dump类和方法信息</p>
+</li>
+<li><p>iOS在Cydia安装Frida,我们该怎样安装呢?</p>
+</li>
+</ul>
+<p><code>注意</code><br>如果你第一次打开Cydia,搜索Frida是搜索不到的,我们需要在软件源中添加,红线画的是frida软件源地址,你可以添加一下.</p>
+<p><img src="/tech-blog/assets/images/e754781ad04f.webp" alt="Cydia\_Frida" loading='lazy'></p>
+<p>Cydia_Frida</p>
+<ul>
+<li>如果你已经配置完成,我们跳转到搜索页面</li>
+</ul>
+<p><img src="/tech-blog/assets/images/9dd621ffc2ba.webp" alt="搜索frida" loading='lazy'></p>
+<p>搜索frida</p>
+<p><code>我们搜索frida,然后安装即可.</code></p>
+<ul>
+<li>我们Mac下安装frida,怎么安装呢?<br><code>打开我们的终端,输入 sudo pip install frida</code></li>
+</ul>
+<p><img src="/tech-blog/assets/images/06c1d193a48b.webp" alt="Mac下安装frida" loading='lazy'></p>
+<p>Mac下安装frida</p>
+<p><code>我们通过终端已完成安装</code></p>
+<p><code>注意</code><br>如果出现下面的错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Uninstalling a distutils installed project (six) has been deprecated and will be</span><br><span class="line">removed in a future version. This is due to the fact that uninstalling a distutils </span><br><span class="line">project will only partially uninstall the project.</span><br></pre></td></tr></table></figure>
+
+<p>我们如何解决这个问题呢?<br><code>原因:Apple预安装的这个six库出于安全原因被设置为sudo也不可以执行操作，所以需要依赖于高版本的库就需要更新six.</code><br>终端执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install frida –upgrade –ignore-installed six</span><br></pre></td></tr></table></figure>
+
+<p><code>问题解决后,你可以在尝试安装</code></p>
+<ul>
+<li><p>我们配置frida-ios-dump,并配置frida<br><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://github.com/AloneMonkey/frida-ios-dump">firda-ios-dump下载地址</a></p>
+</li>
+<li><p>我已经下载好了,我们打开文件看看</p>
+<p><img src="/tech-blog/assets/images/83d1f530c381.webp" alt="frida-ios-dump" loading='lazy'></p>
+<p>frida-ios-dump</p>
+</li>
+</ul>
+<p><code>我们可以看到js,python,sh脚本等文件</code></p>
+<ul>
+<li>我们执行<code>sudo pip install -r /opt/frida-ios-dump/requirements.txt --upgrade</code>命令配置环境</li>
+</ul>
+<p><img src="/tech-blog/assets/images/8f08d0509268.webp" alt="配置环境" loading='lazy'></p>
+<p>配置环境</p>
+<p><code>下载了很多文件,需要等待一会,就会配置好</code></p>
+<ul>
+<li>我们还需要编辑一下dump.py文件中的参数</li>
+</ul>
+<p><img src="/tech-blog/assets/images/c28a3e6fcdc7.webp" alt="dump.py文件配置" loading='lazy'></p>
+<p>dump.py文件配置</p>
+<p><code>1.</code> 你可以直接打开文件<br><code>2.</code> 你也可以通过命令打开文件<code>vim /opt/dump/frida-ios-dump/dump.py</code>,进行编辑后保存<br><code>3.</code> 如果没有修改密码,这里了不需要进行修改;如果修改密码,请修改你的密码<br><code>4.</code> 到这里frida环境配置完成</p>
+<ul>
+<li>我们打开终端,进行端口转发,通过ssh连接越狱机.(连接过程,我会在Cydia文章详细介绍)</li>
+</ul>
+<p><code>端口转发</code>  </p>
+<p><img src="/tech-blog/assets/images/28f0fd8733e9.webp" alt="端口转发" loading='lazy'></p>
+<p>端口转发</p>
+<p><code>ssh连接越狱机</code>  </p>
+<p><img src="/tech-blog/assets/images/1dc3fb3e5f22.webp" alt="ssh连接越狱机" loading='lazy'></p>
+<p>ssh连接越狱机</p>
+<ul>
+<li>我们接着执行dump.py -l命令,查看一下需要砸壳的应用</li>
+</ul>
+<p><img src="/tech-blog/assets/images/513cb8aaaa1c.webp" alt="dump.py -l" loading='lazy'></p>
+<p>dump.py -l</p>
+<ul>
+<li>接着我们执行dump.py 应用名&#x2F;应用bundle id</li>
+</ul>
+<p><img src="/tech-blog/assets/images/ded430e016e5.webp" alt="砸壳成功,生成ipa" loading='lazy'></p>
+<p>砸壳成功,生成ipa</p>
+<ul>
+<li>可以在用户目录下找到砸壳的ipa</li>
+</ul>
+<p><img src="/tech-blog/assets/images/0586d59c880f.webp" alt="ipa文件" loading='lazy'></p>
+<p>ipa文件</p>
+<ul>
+<li>我把ipa中的二进制文件拷贝到桌面,验证是否砸壳成功</li>
+</ul>
+<p><img src="/tech-blog/assets/images/386a204f5294.webp" alt="砸壳成功" loading='lazy'></p>
+<p>砸壳成功</p>
+<p><code>没有壳的应用,cyrptid 为0</code></p>
+<h4 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h4><p>我们本篇文章主要讲解了砸壳三剑客.</p>
+<ul>
+<li>dumpdecrypted</li>
+<li>Clutch</li>
+<li>frida-ios-dump</li>
+</ul>
+<p>文章介绍到这里了.</p>
+<p>下篇文章继续介绍iOS逆向工具.</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3f71e66bac5f">金蛋破壳：iOS应用砸壳工具解密</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-dumpdecrypted"><span class="toc-text">1. dumpdecrypted</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Clutch"><span class="toc-text">2.Clutch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-frida-ios-dump-%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%88%90iOS%E5%BA%94%E7%94%A8%E7%A0%B8%E5%A3%B3"><span class="toc-text">3.frida-ios-dump 一条命令完成iOS应用砸壳</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93"><span class="toc-text">4.总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

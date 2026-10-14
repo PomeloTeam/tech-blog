@@ -1,0 +1,235 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>听木子说心语 - 记录问题，也记录走过的路。</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="记录 iOS、Swift、逆向分析与跨平台开发的实践。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="听木子说心语">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/page/3/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="记录 iOS、Swift、逆向分析与跨平台开发的实践。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/img/jianshu-avatar.webp">
+<meta property="article:author" content="听木子说心语">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/img/jianshu-avatar.webp"><script type="application/ld+json"></script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/page/3/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '听木子说心语',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">听木子说心语</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-5b71adcc6504/" title="探秘工具:MacOS工具探索"><img class="post-bg" src="/tech-blog/assets/images/4d07b5321142.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="探秘工具:MacOS工具探索" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-5b71adcc6504/" title="探秘工具:MacOS工具探索">探秘工具:MacOS工具探索</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-20T06:56:04.000Z" title="发表于 2019-12-20 14:56:04">2019-12-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章深入探讨了知行合一：iOS逆向文件类型分析,为我们打下了坚实基础。 本文将进一步介绍iOS逆向工具，既有对已有工具的深入剖析，也会引入一些新的工具。若您尚未了解前文内容，建议先行查阅，以便更…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-7bde5c82d851/" title="知行合一：iOS逆向文件类型分析"><img class="post-bg" src="/tech-blog/assets/images/06d1d6ee4d05.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="知行合一：iOS逆向文件类型分析" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-7bde5c82d851/" title="知行合一：iOS逆向文件类型分析">知行合一：iOS逆向文件类型分析</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-18T22:15:14.000Z" title="发表于 2019-12-19 06:15:14">2019-12-19</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章地址:"拨开云雾：iOS逆向中文件系统结构的解读" 上一篇文章已经介绍iOS系统文件目录结构 前期主要介绍基础知识点,后期进行实战点及工具的使用. 1.文件权限 iOS中的每个文件都具有一系…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-367b420c254b/" title="拨开云雾：iOS逆向中文件系统结构的解读"><img class="post-bg" src="/tech-blog/assets/images/a53d6b03b619.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="拨开云雾：iOS逆向中文件系统结构的解读" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-367b420c254b/" title="拨开云雾：iOS逆向中文件系统结构的解读">拨开云雾：iOS逆向中文件系统结构的解读</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-17T16:06:52.000Z" title="发表于 2019-12-18 00:06:52">2019-12-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章:"知难而进：热爱iOS逆向" 上一篇文章中,介绍了iOS逆向做了些什么,需要怎样的防护,逆向的流程,提到的工具. 本篇将要以文件系统结构开篇,带大家了解文件系统结构. 1.系统文件结构 系…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-d80b078b28b9/" title="知难而进：热爱iOS逆向"><img class="post-bg" src="/tech-blog/assets/images/4c700beb19f0.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="知难而进：热爱iOS逆向" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-d80b078b28b9/" title="知难而进：热爱iOS逆向">知难而进：热爱iOS逆向</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-05T08:36:02.000Z" title="发表于 2019-12-05 16:36:02">2019-12-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">上一篇文章:"穿越迷雾：iOS逆向之手机越狱的探索之旅" 在上一篇文章中，我详细介绍了iOS逆向工程的准备工作以及如何进行iOS越狱。正如一位朋友所留言的那样，iOS 11.0 - 12.4版本可以使…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-be03991987b9/" title="技艺精进：iOS逆向工具精选"><img class="post-bg" src="/tech-blog/assets/images/551a037c8b23.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="技艺精进：iOS逆向工具精选" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-be03991987b9/" title="技艺精进：iOS逆向工具精选">技艺精进：iOS逆向工具精选</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-04T15:23:09.000Z" title="发表于 2019-12-04 23:23:09">2019-12-04</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/">iOS开发技术记录</a></span></div><div class="content">1.debugserver和LLDB 倚天剑 屠龙刀 如果说IDA是倚天剑，那么LLDB就是屠龙刀。在iOS逆向工程中，两者相辅相成。 LLDB全称Low Level Debugger，由苹果出品，作…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-887edaf83222/" title="穿越迷雾：iOS逆向之手机越狱的探索之旅"><img class="post-bg" src="/tech-blog/assets/images/acd644b2223f.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="穿越迷雾：iOS逆向之手机越狱的探索之旅" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-887edaf83222/" title="穿越迷雾：iOS逆向之手机越狱的探索之旅">穿越迷雾：iOS逆向之手机越狱的探索之旅</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2019-12-02T08:48:02.000Z" title="发表于 2019-12-02 16:48:02">2019-12-02</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="content">写iOS逆向文章的起因 很高兴能写下这篇文章，因为我之前从事过iOS逆向开发，并有幸与各位朋友分享我的经验。我会尽最大的能力，将每篇文章写得清楚明了，带领大家深入了解iOS逆向的魅力。如果有机会，我还…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-2d3590a1e711/" title="披荆斩棘：越狱设备Cydia报错的优雅解决"><img class="post-bg" src="/tech-blog/assets/images/9aa3b13a0470.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="披荆斩棘：越狱设备Cydia报错的优雅解决" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-2d3590a1e711/" title="披荆斩棘：越狱设备Cydia报错的优雅解决">披荆斩棘：越狱设备Cydia报错的优雅解决</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2018-06-05T15:42:35.000Z" title="发表于 2018-06-05 23:42:35">2018-06-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/">iOS开发技术记录</a></span></div><div class="content">手机越狱后，通过编译make命令，然后使用make package命令打包，最后使用make install命令将插件安装到手机时，一不小心可能会导致手机出现白苹果情况。即使简单地抹掉数据并恢复数据，…</div></div></div><div class="recent-post-item"><div class="post_cover"><a href="/tech-blog/posts/post-a2a8aa870614/" title="切磋技艺：iOS逆向工具精选"><img class="post-bg" src="/tech-blog/assets/images/f59d1e102cd5.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="切磋技艺：iOS逆向工具精选" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/tech-blog/posts/post-a2a8aa870614/" title="切磋技艺：iOS逆向工具精选">切磋技艺：iOS逆向工具精选</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2018-04-26T16:42:07.000Z" title="发表于 2018-04-27 00:42:07">2018-04-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/">iOS开发技术记录</a></span></div><div class="content">如果你渴望成为一名精通iOS逆向开发的工程师，但却缺乏自己的工具集，那么在着手实战开发之前，提前准备好逆向开发工具是必不可少的。接下来，我们将逐一介绍这些工具的安装和使用方法。 1.工具盛宴：从pp助…</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/tech-blog/page/2/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/tech-blog/">1</a><a class="page-number" href="/tech-blog/page/2/#content-inner">2</a><span class="page-number current">3</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div>
+          <ul class="card-category-list expandBtn" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/tech-blog/categories/iOS%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E8%AE%B0%E5%BD%95/"><span class="card-category-list-name">iOS开发技术记录</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/"><span class="card-category-list-name">iOS逆向开发记录</span><span class="card-category-list-count">28</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tech-blog/tags/iOS/" style="font-size: 1.1em; color: #999">iOS</a></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, {"typeSpeed":65,"backSpeed":30,"backDelay":2200,"startDelay":500,"loop":true}))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('/tech-blog/pluginsSrc/typed.js/dist/typed.umd.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["在代码里探索，在实践中成长。","iOS · Swift · 逆向分析 · 全栈开发","把遇到的问题，变成可以回访的知识。"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed && typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["在代码里探索，在实践中成长。","iOS · Swift · 逆向分析 · 全栈开发","把遇到的问题，变成可以回访的知识。"])
+}
+typedJSFn.run(subtitleType)</script></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>

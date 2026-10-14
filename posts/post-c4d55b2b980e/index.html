@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>举一反三：iOS逆向App签名 | 听木子说心语</title><meta name="author" content="听木子说心语"><meta name="copyright" content="听木子说心语"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="上一篇文章: &quot;畅所欲言: iOS逆向问题讨论&quot; 本篇文章我们继续介绍如何对App进行签名。 内容包括代码签名和自动化签名的使用，将会加深你对应用签名的理解。 App签名 1.App签名的目的 App…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="举一反三：iOS逆向App签名">
+<meta property="og:url" content="https://pomeloteam.github.io/tech-blog/posts/post-c4d55b2b980e/">
+<meta property="og:site_name" content="听木子说心语">
+<meta property="og:description" content="上一篇文章: &quot;畅所欲言: iOS逆向问题讨论&quot; 本篇文章我们继续介绍如何对App进行签名。 内容包括代码签名和自动化签名的使用，将会加深你对应用签名的理解。 App签名 1.App签名的目的 App…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pomeloteam.github.io/tech-blog/assets/images/0c6ddf6fde1a.webp">
+<meta property="article:author" content="听木子说心语">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pomeloteam.github.io/tech-blog/assets/images/0c6ddf6fde1a.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "举一反三：iOS逆向App签名",
+  "url": "https://pomeloteam.github.io/tech-blog/posts/post-c4d55b2b980e/",
+  "image": "https://pomeloteam.github.io/tech-blog/assets/images/0c6ddf6fde1a.webp",
+  "datePublished": "2020-02-06T10:13:40.000Z",
+  "dateModified": "2024-04-14T00:24:45.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "听木子说心语",
+      "url": "https://pomeloteam.github.io/tech-blog"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/tech-blog/img/jianshu-avatar.webp"><link rel="canonical" href="https://pomeloteam.github.io/tech-blog/posts/post-c4d55b2b980e/"><link rel="preconnect"/><link rel="stylesheet" href="/tech-blog/css/index.css"><link rel="stylesheet" href="/tech-blog/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/tech-blog/',
+  algolia: undefined,
+  localSearch: {"path":"/tech-blog/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":true,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/tech-blog/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '举一反三：iOS逆向App签名',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/tech-blog/css/custom.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/tech-blog/img/hero-atmosphere.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/tech-blog/"><span class="site-name">听木子说心语</span></a><a class="nav-page-title" href="/tech-blog/"><span class="site-name">举一反三：iOS逆向App签名</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/tech-blog/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/tech-blog/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">举一反三：iOS逆向App签名</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-02-06T10:13:40.000Z" title="发表于 2020-02-06 18:13:40">2020-02-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/tech-blog/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91%E8%AE%B0%E5%BD%95/">iOS逆向开发记录</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>上一篇文章: <a href="/tech-blog/posts/post-6c5d53a93820/">“畅所欲言: iOS逆向问题讨论”</a></p>
+<p>本篇文章我们继续介绍如何对App进行签名。</p>
+<p>内容包括代码签名和自动化签名的使用，将会加深你对应用签名的理解。</p>
+<p><img src="/tech-blog/assets/images/0c6ddf6fde1a.webp" alt="文章配图" loading='lazy'></p>
+<h4 id="App签名"><a href="#App签名" class="headerlink" title="App签名"></a>App签名</h4><h6 id="1-App签名的目的"><a href="#1-App签名的目的" class="headerlink" title="1.App签名的目的"></a>1.App签名的目的</h6><p>App签名的目的在于验证数据的安全性，防止数据被篡改。</p>
+<p>这句话的理解是，通过对应用进行签名，可以确保应用在传输过程中或在被执行时没有被恶意篡改，从而保障数据的完整性和安全性。</p>
+<p><code>1.</code> 主流系统平台如Mac和Windows在开发和运行软件时不需要签名，这意味着开发者可以在这些平台上创建并运行未经过签名的软件。</p>
+<p><code>分享</code><br>这里分享一个关于Mac平台的小故事。如果你从事过Mac开发，相信你对Mac应用的开发有一定的了解。</p>
+<p>对于简单的开发任务，Mac平台允许我们通过一些证书配置完成应用的打包。我们可以在自己的平台上进行应用的分发，而无需将应用提交到Mac应用商店。当然，如果需要，我们也可以选择将应用提交到Mac应用商店。</p>
+<p>然而，如果我们开发的应用需要使用较多的权限，例如使用了扩展进程等功能，这些应用就必须上架到Mac应用商店。由于苹果证书的限制，开发者无法直接分发这些应用。</p>
+<p><code>2.</code> 软件下载平台的缺乏限制可能导致应用的控制权流失，因此苹果希望解决这个问题，以确保安装到iOS设备上的应用都是经过苹果允许的。</p>
+<p><code>3.</code> 是的，正是由于这样的需求，苹果才实施了应用签名机制。这个机制确保了应用的安全性和可信度，让用户可以放心地下载和使用在App Store上经过苹果审核的应用。</p>
+<h6 id="2-签名机制"><a href="#2-签名机制" class="headerlink" title="2.签名机制"></a>2.签名机制</h6><p><code>1.</code> 这里的签名指的是数字签名,它是基于非对称加密算法实现的.</p>
+<p><code>补充</code></p>
+<ol>
+<li>对称加密算法:<br>RC4,DES,3DES,AES128,AES356等,加解密双方密钥相同.</li>
+<li>非对称加密算法:<br>RSA,Elgamal等,加解密双方使用密钥对.</li>
+<li>哈希算法:<br>MD(16Byte),SHA1(20Byte)等.<br>任意长度的信息转换成到某一固定长度的信息摘要,主要作用是对数据完整性校验.<br>具有唯一性,不可逆性</li>
+</ol>
+<p><code>2.</code> 对称加密是通过同一份密钥加密和解密数据,一般接口请求的时候,我们会应用到对称加密&#x2F;解密.</p>
+<p><code>3.</code> 非对称加密则有两份密钥,公钥和私钥.</p>
+<p><code>用公钥加密的数据,要用私钥解密;</code></p>
+<p><code>用私钥加密的数据,要用公钥解密</code></p>
+<p>所以非对称加密以现有的技术很难破解,非对称加密是非常安全的.</p>
+<h6 id="3-App签名方式"><a href="#3-App签名方式" class="headerlink" title="3.App签名方式"></a>3.App签名方式</h6><p><code>1.</code> 企业签名<br>一般不容易上架的应用,会通过企业签名.签名后通过自己的官网进行应用下发.</p>
+<p><code>2.</code> 开发者账号签名<br>开发者账号签名,(公司和个人账号),进行App调试,设备数量有限制</p>
+<h6 id="4-数字签名"><a href="#4-数字签名" class="headerlink" title="4.数字签名"></a>4.数字签名</h6><ul>
+<li>数字签名怎么理解?</li>
+</ul>
+<p>举个例子,企业领导数据报表签字,如果领导签字,说明数据报表合格,数据就不能随意更改.</p>
+<ul>
+<li>什么是数字签名</li>
+</ul>
+<p><img src="/tech-blog/assets/images/f705a821caf5.webp" alt="文章配图" loading='lazy'></p>
+<p>我们通过计算校验数据HASH值,将校验的HASH值进行RSA加密,RSA加密过后的Hash值,即为数字签名.</p>
+<p><code>注意</code></p>
+<p><code>如果被校验的数据是代码,则是代码签名</code></p>
+<h6 id="5-苹果双向签名"><a href="#5-苹果双向签名" class="headerlink" title="5.苹果双向签名"></a>5.苹果双向签名</h6><p><img src="/tech-blog/assets/images/a885951ad984.webp" alt="苹果双向签名" loading='lazy'></p>
+<p>苹果双向签名</p>
+<p>我亲自制作了上面的双向签名图,更好地理解苹果双向签名的机制。</p>
+<p><code>如上图所示</code></p>
+<p><code>1.</code> 开发者可以通过配置证书、描述文件等来打包和上架应用。这里提到的CSR也可以指本地公钥。</p>
+<p><code>2.</code> Apple服务器使用私钥A来打包证书。</p>
+<p><code>3.</code> Mac使用证书将本地私钥绑定。</p>
+<p><code>4.</code> 在安装App时，通过iPhone中的公钥A和证书中的私钥A进行验证，获取公钥、设备ID、AppID等信息。</p>
+<p><code>5.</code> 使用上一步获取的公钥进行私钥解密，以进行App签名。</p>
+<h6 id="6-如何对应用签名"><a href="#6-如何对应用签名" class="headerlink" title="6.如何对应用签名"></a>6.如何对应用签名</h6><ul>
+<li><code>1.</code>iOS App Signer</li>
+</ul>
+<p><img src="/tech-blog/assets/images/9b0c443dbbd8.webp" alt="文章配图" loading='lazy'></p>
+<p>前面的文章有介绍到 <a href="/tech-blog/posts/post-5b71adcc6504/">“探秘工具:MacOS工具探索”</a><code>ios-app-signer (ipa文件重签名)的内容</code></p>
+<p>可以阅读一下文章,经过重新签名,你就可以安装应用到iPhone设备了.</p>
+<ul>
+<li><code>2.</code>通过终端命令进行签名</li>
+</ul>
+<p>我们先获取到本机所有证书</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">security find-identity -v -p codesigning</span><br></pre></td></tr></table></figure>
+
+<p>你可以选择其中一个证书进行签名</p>
+<p><code>如何进行签名</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codesign -fs &quot;配置证书&quot; 签名的文件</span><br></pre></td></tr></table></figure>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>本篇文章主要介绍以下内容:</p>
+<p><code>1.</code> App签名的目的</p>
+<p><code>2.</code> 签名机制</p>
+<p><code>3.</code> App签名方式</p>
+<p><code>4.</code> 数字签名</p>
+<p><code>5.</code> 苹果双向签名</p>
+<p><code>6.</code> 我们如何进行签名</p>
+<p>通过这些内容的了解，相信您对App签名有了一定的了解。欢迎关注文章。</p>
+<hr>
+<p>原文：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/aa739cc7e082">举一反三：iOS逆向App签名</a></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tech-blog/tags/iOS/">iOS</a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/tech-blog/img/jianshu-avatar.webp" onerror="this.onerror=null;this.src='/tech-blog/img/cover.svg'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">听木子说心语</div><div class="author-info-description">从 iOS 与 Swift 出发，持续记录、思考与构建。</div><div class="site-data"><a href="/tech-blog/archives/"><div class="headline">文章</div><div class="length-num">32</div></a><a href="/tech-blog/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/tech-blog/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/PomeloTeam"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/PomeloTeam" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.jianshu.com/u/e1ee7a9783c8" target="_blank" title="简书"><i class="fas fa-pen-nib"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#App%E7%AD%BE%E5%90%8D"><span class="toc-text">App签名</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#1-App%E7%AD%BE%E5%90%8D%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-text">1.App签名的目的</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#2-%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6"><span class="toc-text">2.签名机制</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3-App%E7%AD%BE%E5%90%8D%E6%96%B9%E5%BC%8F"><span class="toc-text">3.App签名方式</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#4-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="toc-text">4.数字签名</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#5-%E8%8B%B9%E6%9E%9C%E5%8F%8C%E5%90%91%E7%AD%BE%E5%90%8D"><span class="toc-text">5.苹果双向签名</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#6-%E5%A6%82%E4%BD%95%E5%AF%B9%E5%BA%94%E7%94%A8%E7%AD%BE%E5%90%8D"><span class="toc-text">6.如何对应用签名</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 听木子说心语</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/tech-blog/js/utils.js"></script><script src="/tech-blog/js/main.js"></script><script src="/tech-blog/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script src="/tech-blog/js/local-preview.js" defer></script><script src="/tech-blog/js/hero-effects.js" defer></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章、知识点" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/tech-blog/js/search/local-search.js"></script></div></div></body></html>
